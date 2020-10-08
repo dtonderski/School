@@ -1,0 +1,13 @@
+interface A {
+abstract int m1(int i);
+}
+
+interface B extends A {
+public int k = 0;
+public int m2(int i);
+}
+
+	interface C {
+	int i=0;
+	int m3(int i);
+	}

@@ -1,0 +1,153 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Matlab</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-02-06"><meta name="DC.source" content="Matlab.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Plottar sqrt(h^2+k^2+l^2)/sin(theta) f&ouml;r SC</a></li><li><a href="#3">Plottar sqrt(h^2+k^2+l^2)/sin(theta) f&ouml;r BCC</a></li><li><a href="#4">Plottar sqrt(h^2+k^2+l^2)/sin(theta) f&ouml;r FCC, detta &auml;r den s&ouml;kta</a></li><li><a href="#5">Visar a</a></li></ul></div><pre class="codeinput"><span class="comment">% En l&ouml;sning i MATLAB verkade enklast d&aring; m&aring;nga ber&auml;kningar kr&auml;vs. F&ouml;rst</span>
+<span class="comment">% r&auml;knas sinus av de uppm&auml;tta vinklarna upp. Sedan r&auml;knas de 8 f&ouml;rsta</span>
+<span class="comment">% v&auml;rdena p&aring; sqrt(h^2 + k^2 + l^2) ut enligt tabell. F&ouml;r kristallstrukturen</span>
+<span class="comment">% vi s&ouml;ker blir sqrt(h^2+k^2+l^2)/sin(theta) =  2*a/lambda, allts&aring; ett</span>
+<span class="comment">% konstant v&auml;rde. F&ouml;r varje kristallstruktur plottas dessa v&auml;rden. F&ouml;r b&aring;de</span>
+<span class="comment">% SC och BCC blev det inte konstant, men f&ouml;r FCC blev det (i princip)</span>
+<span class="comment">% konstant. D&auml;rmed &auml;r FCC den s&ouml;kta kristallstrukturen.</span>
+<span class="comment">% a r&auml;knas ut separat sedan ut f&ouml;r varje (vinkel, hkl)-kombination. Det</span>
+<span class="comment">% slutgiltiga v&auml;rdet p&aring; a &auml;r medelv&auml;rdet av alla ber&auml;knade a-n, och detta</span>
+<span class="comment">% blir ca. 4 &Aring;.</span>
+
+<span class="comment">%R&auml;knar ut n&ouml;dv&auml;ndiga v&auml;rden</span>
+lambda = 1.54;
+anglesdeg = [19.48,22.64,33.0,39.68,41.83,50.35,57.05,59.42];
+sinusangles = sind(anglesdeg);
+hklSC = sqrt([1,2,3,4,5,6,8,9]);
+hklBCC = sqrt([2,4,6,8,10,12,14,16]);
+hklFCC = sqrt([3,4,8,11,12,16,19,20]);
+</pre><h2 id="2">Plottar sqrt(h^2+k^2+l^2)/sin(theta) f&ouml;r SC</h2><pre class="codeinput">figure(1)
+SCratio = hklSC./sinusangles;
+plot(1:8,SCratio,<span class="string">'o'</span>)
+title(<span class="string">'SC'</span>)
+ylim([2 6])
+</pre><img vspace="5" hspace="5" src="Matlab_01.png" alt=""> <h2 id="3">Plottar sqrt(h^2+k^2+l^2)/sin(theta) f&ouml;r BCC</h2><pre class="codeinput">figure(2)
+BCCratio = hklBCC./sinusangles;
+plot(1:8, BCCratio,<span class="string">'o'</span>)
+title(<span class="string">'BCC'</span>)
+ylim([2 6])
+</pre><img vspace="5" hspace="5" src="Matlab_02.png" alt=""> <h2 id="4">Plottar sqrt(h^2+k^2+l^2)/sin(theta) f&ouml;r FCC, detta &auml;r den s&ouml;kta</h2><pre class="codeinput"><span class="comment">%kristallstrukturen</span>
+figure(3)
+FCCratio = hklFCC./sinusangles;
+plot(1:8,FCCratio,<span class="string">'o'</span>)
+title(<span class="string">'FCC'</span>)
+ylim([2 6])
+</pre><img vspace="5" hspace="5" src="Matlab_03.png" alt=""> <h2 id="5">Visar a</h2><pre class="codeinput">a = mean(lambda/2 * FCCratio);
+disp(a) <span class="comment">%3.9997</span>
+</pre><pre class="codeoutput">    3.9997
+
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% En lösning i MATLAB verkade enklast då många beräkningar krävs. Först
+% räknas sinus av de uppmätta vinklarna upp. Sedan räknas de 8 första 
+% värdena på sqrt(h^2 + k^2 + l^2) ut enligt tabell. För kristallstrukturen
+% vi söker blir sqrt(h^2+k^2+l^2)/sin(theta) =  2*a/lambda, alltså ett
+% konstant värde. För varje kristallstruktur plottas dessa värden. För både 
+% SC och BCC blev det inte konstant, men för FCC blev det (i princip) 
+% konstant. Därmed är FCC den sökta kristallstrukturen.
+% a räknas ut separat sedan ut för varje (vinkel, hkl)-kombination. Det 
+% slutgiltiga värdet på a är medelvärdet av alla beräknade a-n, och detta
+% blir ca. 4 Å.
+
+%Räknar ut nödvändiga värden
+lambda = 1.54;
+anglesdeg = [19.48,22.64,33.0,39.68,41.83,50.35,57.05,59.42];
+sinusangles = sind(anglesdeg);
+hklSC = sqrt([1,2,3,4,5,6,8,9]);
+hklBCC = sqrt([2,4,6,8,10,12,14,16]);
+hklFCC = sqrt([3,4,8,11,12,16,19,20]);
+
+%% Plottar sqrt(h^2+k^2+l^2)/sin(theta) för SC
+figure(1)
+SCratio = hklSC./sinusangles;
+plot(1:8,SCratio,'o')
+title('SC')
+ylim([2 6])
+
+%% Plottar sqrt(h^2+k^2+l^2)/sin(theta) för BCC
+figure(2)
+BCCratio = hklBCC./sinusangles;
+plot(1:8, BCCratio,'o')
+title('BCC')
+ylim([2 6])
+
+%% Plottar sqrt(h^2+k^2+l^2)/sin(theta) för FCC, detta är den sökta
+%kristallstrukturen
+figure(3)
+FCCratio = hklFCC./sinusangles;
+plot(1:8,FCCratio,'o')
+title('FCC')
+ylim([2 6])
+%% Visar a
+a = mean(lambda/2 * FCCratio);
+disp(a) %3.9997 
+##### SOURCE END #####
+--></body></html>

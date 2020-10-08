@@ -1,0 +1,248 @@
+<html>
+<!--
+Authors: T.Djärv (djarv@chalmers.se) and I.Svensson (isak.svensson@chalmers.se)
+-->
+<head>
+<meta charset="utf-8">
+<title>K6</title>
+</head>
+<body bgcolor=#BFBFC5>
+<center>
+<div class="mainPage">
+<div class="center">
+<p1 style="font-size:32">Välj aktiveringsläge:</p1></br>
+<select id="initialNNuclei">
+<option value="[9791, 8539]">Jämvikt (lång aktivering)</option>
+<option value="[4697, 10488]">Pos 1 utan Cd</option>
+<option value="[4003, 8765]">Pos 2 utan Cd</option>
+<option value="[1414, 3067]">Pos 3 utan Cd</option>
+<option value="[637, 1431]">Pos 2 med Cd</option>
+<option value="[280, 635]">Pos 3 med Cd</option>
+<option value="[0, 0]">Endast bakgrund</option>
+</select>
+<button onclick="activateNuclei()">Aktivera</button>
+</br>
+</br>
+</br>
+<p1 style="font-size:42px">Antal sönderfall:</p1></br>
+<p1 style="font-size:52" id="counterOutput">0</p1>
+</br>
+<button type="button" onclick="startCounter()">Start</button>
+<button type="button" onclick="stopCounter()">Stopp</button>
+<button type="button" onclick="resetCounter()">Återställ</button>
+<select id="modeSelector" onchange="modeSelected()">
+<option value="false">Normalt läge</option>
+<option value="true">Automatiskt läge</option>
+</select>
+<select id="timeSelector">
+<option value="10000">10 s</option>
+<option value="20000">20 s</option>
+<option value="30000">30 s</option>
+<option value="50000">50 s</option>
+<option value="60000">1 min</option>
+<option value="600000">10 min</option>
+</select>
+</br>
+<button onclick="toggleInstructions()">Hjälp</button>
+<div id="instructions" class="instructionPage">
+<h1>Instruktioner</h1>
+<div align="left">
+<h2>Aktivering</h2>
+<p1>
+För att simulera aktivering av en silverplatta väljer ni först aktiveringsläge, därefter klickar ni på ”Aktivera”. Att klicka på ”Aktivera” motsvarar att ta ur plattan ur källan, dvs betasönderfallen börjar direkt. Ögonblicket då ni trycker på ”Aktivera” blir alltså t=0.
+</p1>
+<h2>Mätning</h2>
+<p2>
+Precis som i verkligheten så kan ni inte se att sönderfallen sker, utan de måste mätas upp. För att börja mäta sönderfallen trycker ni på ”Start”, då kommer ”Antal sönderfall” att börja räkna antalet sönderfall från den tidpunkten tills dess att ni trycker på ”Stopp”. Om ni har satt räknaren i ”Automatiskt läge” kan ni välja en tid som räknaren ska automatiskt stanna efter. Knappen ”Återställ” sätter räknaren till 0.
+</p2>
+</div>
+</div>
+</div>
+</div>
+</center>
+<div id="timerView" class="timerView">
+<div class="center">
+<center>
+<p1 style="font-size:58" id='timerDisplay'>
+00:00:00
+</p1>
+</center>
+</div>
+</div>
+</body>
+<script src="bower_components/random/lib/random.min.js" type="text/javascript" ></script>
+<script src="bower_components/prob.js/dist/prob-min.js" type="text/javascript" ></script>
+<script>
+const LAMBDA_108 = 0.693/(2.4*60);
+const LAMBDA_110 = 0.693/25;
+const AG_108 = 0;
+const AG_110 = 1;
+const DIFFERENCE_TIME = 50; // milliseconds
+
+var numNuclei = [0,0];
+var numCounts = 0;
+var backgroundLevel = Prob.uniform(10.0, 20.0)(); // Counts per minute
+var shouldCount = false;
+var mainLoopId = null;
+var timeoutId = null;
+var timeSinceActivation = 0;
+toggleInstructions();
+modeSelected();
+function activateNuclei() {
+	var initialNNuclei = document.getElementById('initialNNuclei');
+	numNuclei = JSON.parse(initialNNuclei.value);
+	if (mainLoopId != null)
+		clearInterval(mainLoopId);
+	timeSinceActivation = 0;
+	mainLoopId = setInterval(mainLoop,DIFFERENCE_TIME);
+}
+function startCounter() {
+	shouldCount = true;
+	if (automaticMode()) {
+		timeoutId = setTimeout(stopCounter,automaticTimeoutTime());	
+	}
+}
+function stopCounter() {
+	shouldCount = false;
+	if (timeoutId == null)
+		return;
+	clearTimeout(timeoutId);
+	timeoutId = null;
+}
+function resetCounter() {
+	numCounts = 0;
+	updateCounterOutput();
+}
+function modeSelected() {
+	var timeSelector = document.getElementById('timeSelector');
+	if (automaticMode()) {
+		timeSelector.style.display = 'block';
+	} else {
+		timeSelector.style.display = 'none';
+	}
+}
+function toggleInstructions() {
+	var instructions = document.getElementById('instructions');
+	if (instructions.style.display === 'none') {
+		instructions.style.display = 'block';
+	} else {
+		instructions.style.display = 'none';
+	}
+}
+function mainLoop() {
+	updateCounter();
+	updateCounterOutput();	
+	updateTimerDisplay();
+}
+function updateCounter() {
+	numDecays = decay(numNuclei,DIFFERENCE_TIME*1e-3);
+	numNuclei = 
+		[numNuclei[AG_108]-numDecays[AG_108], 
+		numNuclei[AG_110]-numDecays[AG_110]];
+	if (shouldCount) {
+		numCounts += numDecays[AG_108]+numDecays[AG_110];
+		numCounts += generateBackgroundCounts(backgroundLevel, DIFFERENCE_TIME);
+	}
+	timeSinceActivation += DIFFERENCE_TIME;
+}
+function automaticMode() {
+	var modeSelector = document.getElementById('modeSelector');
+	return modeSelector.value == 'true';
+}
+function automaticTimeoutTime() {
+	var timeSelector = document.getElementById('timeSelector');
+	return timeSelector.value;
+}
+function calculateDecaysInIntervalSingle(n,lmbda,t0,t1) {
+	return n * (Math.exp(-lmbda*t0) - Math.exp(-lmbda*t1));
+}
+function calculateDecaysInInterval(nNuclei, t0, t1) {
+	var nDecays108 =
+	       	calculateDecaysInIntervalSingle(nNuclei[AG_108],LAMBDA_108,t0,t1);
+	var nDecays110 =
+	       	calculateDecaysInIntervalSingle(nNuclei[AG_110],LAMBDA_110,t0,t1);
+	return [nDecays108,nDecays110];
+}
+function generateBackgroundCounts(backgroundLevel,differenceTime) {
+	expectedBackgroundCounts = differenceTime * backgroundLevel / 60000;
+	numBackgroundCounts = Prob.poisson(expectedBackgroundCounts)();
+	return numBackgroundCounts;
+}
+function decay(nNuclei,differenceTime) {
+	var expectedDecays =
+	       	calculateDecaysInInterval(nNuclei,0,differenceTime);
+	var nDecays = [0,0];
+	if (expectedDecays[AG_108] > 0) {
+		nDecays[AG_108] = Prob.poisson(expectedDecays[AG_108])();
+	}
+	if (expectedDecays[AG_110] > 0) {
+		nDecays[AG_110] = Prob.poisson(expectedDecays[AG_110])();
+	}
+	return nDecays;
+}
+function updateCounterOutput() {
+	var counterOutput = document.getElementById("counterOutput");
+	counterOutput.innerHTML = numCounts;
+}
+function updateTimerDisplay() {
+	var timerDisplay = document.getElementById("timerDisplay");
+	var outputString = "";
+	var minutes = Math.floor(timeSinceActivation/60000);
+	if (minutes < 10) {
+		outputString += "0"+minutes;
+	} else {
+		outputString += minutes;
+	}
+	var seconds = Math.floor(timeSinceActivation/1000)%60;
+	if (seconds < 10) {
+		outputString += ":0"+seconds;
+	} else {
+		outputString += ":"+seconds;
+	}
+	var hundreds = Math.floor(timeSinceActivation/10)%100;
+	if (hundreds < 10) {
+		outputString += ":0"+hundreds;
+	} else {
+		outputString += ":"+hundreds;
+	}
+	timerDisplay.innerHTML = outputString;
+}
+</script>
+<style>
+div.mainPage {
+	height: 1188px;
+	width: 840px;
+	background-color:#FFFFFF;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%,-50%);
+	transform: translate(-50%, -50%);
+	-moz-box-shadow: 3px 3px 5px 6px #aaa;
+	-webkit-box-shadow: 3px 3px 5px 6px #aaa;
+	box-shadow: 3px 3px 5px 6px #aaa;
+}
+div.instructionPage {
+	height:50%;
+	width: 50%;
+}
+div.center {
+	margin: 0;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+div.timerView {
+	height: 200px;
+	width:  324px;
+	border-radius: 10px;
+	-moz-box-shadow: 3px 3px 5px 6px #aaa;
+	-webkit-box-shadow: 3px 3px 5px 6px #aaa;
+	box-shadow: 3px 3px 5px 6px #aaa;
+	background-image: linear-gradient(to bottom,#8F8FAF,#8F8FFF);
+	position: absolute;
+}
+</style>
+</html>

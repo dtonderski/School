@@ -1,0 +1,1 @@
+﻿Vi har lyckats med allt utom det svåra, alltså att få lösningen att vara mer effektiv. Vi har försökt använda av oss tipsen vi fick i den förra kommentaren, men vissa sudokun tar fortfarande upp till ca. 30 sekunder att lösa, och vi vet inte riktigt hur vi skulle kunna lösa det problemet.

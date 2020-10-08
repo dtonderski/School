@@ -1,0 +1,233 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>HUPP1</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-02-04"><meta name="DC.source" content="HUPP1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">clear
+close <span class="string">all</span>
+
+N=1024; <span class="comment">% NxN &auml;r matrisstorleken (rekommenderad storlek N=1024)</span>
+sidlaengd_Plan1=4e-3; <span class="comment">% det samplade omr&aring;dets storlek (i x- eller y-led) i Plan 1 (rekommenderad storlek 4 mm)</span>
+a=sidlaengd_Plan1/N; <span class="comment">% samplingsavst&aring;nd i Plan 1 (och Plan 2 eftersom vi anv&auml;nder PAS)</span>
+L=20e-3; <span class="comment">% propagationsstr&auml;cka (dvs avst&aring;nd mellan Plan 1 och 2)</span>
+
+lambda_noll=633e-9; <span class="comment">% vakuumv&aring;gl&auml;ngd f&ouml;r r&ouml;tt ljus fr&aring;n en HeNe-laser</span>
+n_medium=1; <span class="comment">% brytningsindex f&ouml;r medium mellan Plan 1 och 2</span>
+k=2*pi*n_medium/lambda_noll; <span class="comment">% k-vektorns l&auml;ngd *** Klar</span>
+
+xvekt=-N/2*a:a:(N/2-1)*a; <span class="comment">% vektor med sampelpositioner i x-led</span>
+yvekt=xvekt; <span class="comment">% och y-led</span>
+[xmat,ymat]=meshgrid(xvekt,yvekt); <span class="comment">% koordinatmatriser med x- och y-v&auml;rdet i varje sampelposition</span>
+rmat=sqrt(xmat.^2+ymat.^2); <span class="comment">% avst&aring;ndet till origo i varje sampelpunkt. Observera att alla operationer &auml;r elementvisa!</span>
+
+<span class="comment">%******* F&auml;lt i Plan 1</span>
+f_lins=20e-3; <span class="comment">% fokall&auml;ngd p&aring; linsen f&ouml;re Plan 1</span>
+T_lins=exp(-1i*k*rmat.^2/(2*f_lins)); <span class="comment">% Transmissionsfunktion f&ouml;r en lins (linsen &auml;r TOK)</span>
+
+D_apertur=2e-3;
+T_apertur=rmat&lt;(D_apertur/2); <span class="comment">% Transmissionsfunktion f&ouml;r en cirkul&auml;r apertur ("pupill")</span>
+
+omega_in=1e-3; <span class="comment">% 1/e2-radie (f&ouml;r intensiteten, dvs 1/e-radie f&ouml;r amplituden) f&ouml;r infallande Gaussiskt f&auml;lt</span>
+E_in_gauss=exp(-rmat.^2/omega_in^2); <span class="comment">% Infallande f&auml;lt: Gaussiskt med plana v&aring;gfronter och normalinfall (dvs konstant fas, h&auml;r=0)</span>
+
+E_in_konstant=ones(N,N); <span class="comment">% Infallande f&auml;lt: Plan v&aring;g med normalt infall</span>
+
+E1_gauss=E_in_gauss.*T_lins; <span class="comment">% F&auml;ltet i Plan 1 (precis efter linsen) f&ouml;r gaussisk str&aring;le</span>
+E1_cirkular=E_in_konstant.*T_lins.* T_apertur;<span class="comment">% % F&auml;ltet i Plan 1 (precis efter linsen) f&ouml;r konstant f&auml;lt som passerat genom cirkul&auml;r apertur *** Ej klar</span>
+E1=E1_gauss; <span class="comment">% V&auml;lj fall!</span>
+
+I1=abs(E1).^2; <span class="comment">% intensiteten &auml;r prop mot kvadraten p&aring; f&auml;ltets amplitud (normalt struntar man i proportionalitetskonstanten)</span>
+
+figure(1)
+image(xvekt*1e3,yvekt*1e3,I1/max(max(I1))*64)
+title([<span class="string">'Intensitet i Plan 1. Verkar OK, eller?'</span>])
+xlabel(<span class="string">'x[mm]'</span>)
+ylabel(<span class="string">'y[mm]'</span>)
+colormap(gray)
+drawnow
+axis(<span class="string">'equal'</span>)
+
+
+figure(2)
+imagesc(xvekt*1e3,yvekt*1e3,angle(E1))
+title([<span class="string">'Fas i Plan 1. Verkar OK, eller?'</span>])
+xlabel(<span class="string">'x[mm]'</span>)
+ylabel(<span class="string">'y[mm]'</span>)
+colormap(gray)
+colorbar
+drawnow
+axis(<span class="string">'equal'</span>)
+
+pause <span class="comment">% tryck p&aring; valfri tangent f&ouml;r att forts&auml;tta</span>
+
+<span class="comment">%**** Och nu propagerar vi till Plan 2!</span>
+E2=PAS(E1,L,N,a,lambda_noll,n_medium); <span class="comment">% Propagation med PAS-funktionen *** Klar</span>
+
+I2=abs(E2).^2;
+
+
+
+mattnadsfaktor_plot=50; <span class="comment">% anger hur m&aring;nga g&aring;nger maxv&auml;rdet ska vara m&auml;ttat i plotten (&gt;1, kan vara bra om man vill se svagare detaljer)</span>
+figure(3)
+image(xvekt*1e3,yvekt*1e3,I2/max(max(I2))*64*mattnadsfaktor_plot)
+title([<span class="string">'Intensitet efter '</span> num2str(L*1e3) <span class="string">' mm propagation (mattnadsfaktor='</span> num2str(mattnadsfaktor_plot) <span class="string">'). Verkar OK, eller?'</span>])
+xlabel(<span class="string">'x[mm]'</span>)
+ylabel(<span class="string">'y[mm]'</span>)
+colormap(gray)
+drawnow
+axis(<span class="string">'equal'</span>)
+
+figure(4)
+plot(xvekt*1e3,I2(N/2+1,:))
+title([<span class="string">'Intensitet l&auml;ngs x-axeln efter '</span> num2str(L*1e3) <span class="string">' mm propagation. Verkar OK, eller?'</span>])
+xlabel(<span class="string">'x[mm]'</span>)
+drawnow
+</pre><img vspace="5" hspace="5" src="HUPP1_01.png" alt=""> <img vspace="5" hspace="5" src="HUPP1_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear
+close all
+
+N=1024; % NxN är matrisstorleken (rekommenderad storlek N=1024)
+sidlaengd_Plan1=4e-3; % det samplade områdets storlek (i x- eller y-led) i Plan 1 (rekommenderad storlek 4 mm)
+a=sidlaengd_Plan1/N; % samplingsavstånd i Plan 1 (och Plan 2 eftersom vi använder PAS)
+L=20e-3; % propagationssträcka (dvs avstånd mellan Plan 1 och 2)
+
+lambda_noll=633e-9; % vakuumvåglängd för rött ljus från en HeNe-laser
+n_medium=1; % brytningsindex för medium mellan Plan 1 och 2
+k=2*pi*n_medium/lambda_noll; % k-vektorns längd *** Klar
+
+xvekt=-N/2*a:a:(N/2-1)*a; % vektor med sampelpositioner i x-led
+yvekt=xvekt; % och y-led
+[xmat,ymat]=meshgrid(xvekt,yvekt); % koordinatmatriser med x- och y-värdet i varje sampelposition
+rmat=sqrt(xmat.^2+ymat.^2); % avståndet till origo i varje sampelpunkt. Observera att alla operationer är elementvisa!
+
+%******* Fält i Plan 1
+f_lins=20e-3; % fokallängd på linsen före Plan 1
+T_lins=exp(-1i*k*rmat.^2/(2*f_lins)); % Transmissionsfunktion för en lins (linsen är TOK)
+
+D_apertur=2e-3;
+T_apertur=rmat<(D_apertur/2); % Transmissionsfunktion för en cirkulär apertur ("pupill") 
+
+omega_in=1e-3; % 1/e2-radie (för intensiteten, dvs 1/e-radie för amplituden) för infallande Gaussiskt fält
+E_in_gauss=exp(-rmat.^2/omega_in^2); % Infallande fält: Gaussiskt med plana vågfronter och normalinfall (dvs konstant fas, här=0)
+
+E_in_konstant=ones(N,N); % Infallande fält: Plan våg med normalt infall
+
+E1_gauss=E_in_gauss.*T_lins; % Fältet i Plan 1 (precis efter linsen) för gaussisk stråle 
+E1_cirkular=E_in_konstant.*T_lins.* T_apertur;% % Fältet i Plan 1 (precis efter linsen) för konstant fält som passerat genom cirkulär apertur *** Ej klar 
+E1=E1_gauss; % Välj fall!
+
+I1=abs(E1).^2; % intensiteten är prop mot kvadraten på fältets amplitud (normalt struntar man i proportionalitetskonstanten)
+
+figure(1)
+image(xvekt*1e3,yvekt*1e3,I1/max(max(I1))*64)
+title(['Intensitet i Plan 1. Verkar OK, eller?'])
+xlabel('x[mm]')
+ylabel('y[mm]')
+colormap(gray) 
+drawnow
+axis('equal')
+
+
+figure(2)
+imagesc(xvekt*1e3,yvekt*1e3,angle(E1))
+title(['Fas i Plan 1. Verkar OK, eller?'])
+xlabel('x[mm]')
+ylabel('y[mm]')
+colormap(gray) 
+colorbar
+drawnow
+axis('equal')
+
+pause % tryck på valfri tangent för att fortsätta
+
+%**** Och nu propagerar vi till Plan 2!
+E2=PAS(E1,L,N,a,lambda_noll,n_medium); % Propagation med PAS-funktionen *** Klar
+
+I2=abs(E2).^2; 
+
+
+
+mattnadsfaktor_plot=50; % anger hur många gånger maxvärdet ska vara mättat i plotten (>1, kan vara bra om man vill se svagare detaljer)
+figure(3)
+image(xvekt*1e3,yvekt*1e3,I2/max(max(I2))*64*mattnadsfaktor_plot)
+title(['Intensitet efter ' num2str(L*1e3) ' mm propagation (mattnadsfaktor=' num2str(mattnadsfaktor_plot) '). Verkar OK, eller?'])
+xlabel('x[mm]')
+ylabel('y[mm]')
+colormap(gray) 
+drawnow
+axis('equal')
+
+figure(4)
+plot(xvekt*1e3,I2(N/2+1,:))
+title(['Intensitet längs x-axeln efter ' num2str(L*1e3) ' mm propagation. Verkar OK, eller?'])
+xlabel('x[mm]')
+drawnow
+%%
+%
+
+##### SOURCE END #####
+--></body></html>

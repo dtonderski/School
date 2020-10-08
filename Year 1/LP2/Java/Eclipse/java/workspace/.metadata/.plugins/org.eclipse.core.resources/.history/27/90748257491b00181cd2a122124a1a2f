@@ -1,0 +1,349 @@
+import java.beans.*;
+import java.io.*;
+
+public class MySudokuModel implements SudokuModel{
+    
+    // Add property change listener interface
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        pcs.addPropertyChangeListener(l);
+    }
+    public void removePropertyChangeListener(PropertyChangeListener l) {
+        pcs.removePropertyChangeListener(l);
+    }
+
+
+    // Board box values
+    public int[][] board = new int[9][9];
+
+
+    // Constructors
+    // All boxes empty
+    public MySudokuModel() {
+    }
+    
+    // Construct from existing model
+    public MySudokuModel(MySudokuModel new_model) {
+        setBoard(new_model);
+    }
+
+
+    // Get single value at a given place
+    public int getBoard(int row, int col) {
+        return board[row][col];
+    }
+
+    // Get entire board as string
+    public String getBoard() {
+        String ret_string = null;
+        
+        // Iterate over board and add number to string
+        for(int row = 0; row < 9; row++) {
+            for(int col = 0; col < 9; col++) {
+                ret_string += board[row][col];
+            }
+            // Add line seperator at the end of every line but the last
+            if(row < 8) ret_string += "\n" ; 
+        }
+
+        return ret_string;
+    }
+
+
+    // Get entire board as string
+    public String toString() {
+        return getBoard();
+    }
+        
+
+    // Set value at given place
+    public void setBoard(int row, int col, int val) throws IllegalArgumentException {
+        // Check if value is in correct range
+        if(val > 9 || val < 0) {
+            throw new IllegalArgumentException("Number of a box must be between 0 to 9");
+        }
+
+        // Check if given place is on the board
+        if(row > 8 || row < 0 || col > 8 || col < 0) {
+            throw new IllegalArgumentException("Cant place number outside of gamefield");
+        }
+
+        // Check if move is legal
+        if(!isLegal(row, col, val)) {
+            throw new IllegalArgumentException("Number placement breaks rule");
+        }
+
+        // Store old value for property change event
+        int old_value = board[row][col];
+
+        // Update board with new value
+        board[row][col] = val;
+
+        // Fire property change event and attach index of box
+        pcs.fireIndexedPropertyChange("board val", row * 9 + col, old_value, board[row][col]);
+        
+    }
+
+    // Set entire board with string
+    public void setBoard(String input) throws IllegalArgumentException {
+        // Create temporary board to test the string on
+        MySudokuModel new_board = new MySudokuModel();
+
+        // Devide the string in lines
+        String input_lines[] = input.split("\n");
+        
+        // Check if number of lines is correct
+        if(input_lines.length != 9) {
+            throw new IllegalArgumentException("Number of lines is wrong");
+        }
+
+        // Permitted char values
+        String valid_chars = "123456789";
+
+        // Iterate over lines, rows
+        for(int row = 0; row < 9; row++) {
+            // Check if line length is correct
+            if(input_lines[row].length() != 9) {
+                throw new IllegalArgumentException("Line is not correct length");
+            }
+
+            // Iterate ove chars, cols
+            for(int col = 0; col < 9; col++) {
+                // If char is a permited number, add it. Otherwise set to 0.
+                if(valid_chars.indexOf(input_lines[row].charAt(col)) != -1) {
+                     new_board.setBoard(row, col, Character.getNumericValue(input_lines[row].charAt(col)));
+                } else {
+                     new_board.setBoard(row, col, 0);
+                }
+            }   
+        } 
+
+
+        // Create copy of board for fire property change
+        int[][] old_board_array = new int[9][9];
+        for(int row = 0; row < 9; row++) {
+            for(int col = 0; col < 9; col++) {
+                old_board_array[row][col] = board[row][col];
+            }
+        }
+	
+        // Update board
+        setBoard(new_board);
+
+        // Fire property change event
+        pcs.firePropertyChange("board", old_board_array, board);
+
+    }
+
+    // Copy from other board
+    public void setBoard(MySudokuModel new_board) {
+        for(int row = 0; row < 9; row++) {
+            for(int col = 0; col < 9; col++) {
+                board[row][col] = new_board.getBoard(row, col);
+            }
+        }
+    }
+
+    // Update board with given 2dim int array
+    public void setBoard(int[][] new_board) {
+        for(int row = 0; row < 9; row++) {
+            for(int col = 0; col < 9; col++) {
+                board[row][col] = new_board[row][col];
+            }
+        }
+    }
+
+    // Set all values to 0
+    public void clear() {
+        // Create tmp array for property change event
+        int[][] tmp_array = new int[9][9];
+
+        // Set all boxes to zero
+        for(int row = 0; row < 9; row++) {
+            for(int col = 0; col < 9; col++) {
+                board[row][col] = 0;
+            }
+        }
+
+        // Fire property change event
+        pcs.firePropertyChange("board", board, tmp_array);
+    }
+
+
+    // Check if a value is legal at given place
+	//Metod som kollar om man får sätta in värdet value i den angivna raden och kolumnen
+	public boolean isLegal(int row, int column, int value) throws IllegalArgumentException{
+		for(int i=0;i<9;i++){
+			//kör igenom alla värden för den angivna raden och kollar om något är samma som värdet value, om det inte är på samma plats så returneras false
+			if(board[row][i]==value && i!=column && board[row][i]!=0){
+				return false;
+			}
+			//kör igenom alla värden för den angivna kolumnen och kollar om något är samma som värdet value, om det inte är på samma plats så returneras false
+			if(board[i][column]==value && i!=row && board[i][column]!=0){
+				return false;
+			}
+		}
+		//blocken numreras på följande sätt:
+		//(0,0) (0,1) (0,2)
+		//(1,0) (1,1) (1,2)
+		//(2,0) (2,1) (2,2)
+		//rad2 är den första "koordinaten", kol2 är den andra "koordinaten"
+		//rad2 är alltså antalet gånger som tre går in i rad
+		//kol2 är antalet gånger som tre går in i column
+		int row2=((row)-(row)%3)/3;
+		int col2=(column-column%3)/3;
+		//värdena som behöver kollas är alltså de vars rad är från rad2*3 till rad2*3 +3 och de vars column är från column2*3 till column2*3 + 3
+		for(int r=(0+row2*3);r<(3+row2*3);r++){
+			for(int c = (0+col2*3); c<(3+col2*3); c++){
+				if(board[r][c]==value && r!=row && c!=column && board[r][c]!=0){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	//hittar vilken cell som har högst antal positiva siffror i block, kolumn o rad
+	public int[] get_most_constrained_box(){
+		//skapar en array som ger antalet siffror för varje ruta
+		int numbersOfSquare[][]= new int[9][9];
+		//skapar arrayer som ger antalet siffror för varje rad, kolumn och block
+		int numbersInRow[]=new int[9];
+		int numbersInCol[]=new int[9];
+		int numbersInBox[][]=new int[3][3];
+		//räknar ut hur många siffror det finns i vare rad och kolumn
+		for(int r=0; r<9;r++){
+			for(int c=0; c<9;c++){
+				if(board[r][c]!=0){
+					numbersInRow[r]++;
+					numbersInCol[c]++;
+				}
+			}
+		}
+		//räknar ut hur många siffror det finns i varje block
+		for(int blockRow=0;blockRow<3;blockRow++){
+			for(int blockColumn=0;blockColumn<3;blockColumn++){
+				for(int rad=blockRow*3; rad<blockRow*3+3; rad++){
+					for(int col=blockColumn*3; col<blockColumn*3+3;col++){
+						if(board[rad][col]!=0){
+							numbersInBox[blockRow][blockColumn]++;
+						}
+					}
+				}
+			}
+		}
+		
+		//räknar ut antalet siffror för varje ruta som är noll, om rutan inte är noll sätts antalet siffror till 28 (eftersom max annars är 9 (rad) + 9 (kol) + 9 (box)), minus för att undvika special cases
+		int blockRow;
+		int blockCol;
+		for(int r=0; r<9;r++){
+			for(int c=0; c<9;c++){
+				if(board[r][c]==0){
+					blockRow=r/3;
+					blockCol=c/3;
+					numbersOfSquare[r][c]=numbersInRow[r]+numbersInCol[c]+numbersInBox[blockRow][blockCol];
+				}
+				else{
+					numbersOfSquare[r][c]=-1;
+				}
+			}
+		}
+		int mostNumbersCol=0;
+		int mostNumbersRow=0;
+		for(int r=0; r<9; r++){
+			for(int c=0; c<9; c++){
+				if(numbersOfSquare[r][c]>numbersOfSquare[mostNumbersRow][mostNumbersCol]){
+					mostNumbersCol=c;
+					mostNumbersRow=r;
+				}
+			}
+		}
+		if(numbersOfSquare[mostNumbersRow][mostNumbersCol] == -1){
+			mostNumbersRow=-1;
+			mostNumbersCol=-1;
+		}
+		
+		int[] squareNumberMax = {mostNumbersRow, mostNumbersCol};
+
+		return squareNumberMax;
+	}
+
+    // Try to solve board, if possible update board with solution
+    public boolean solve() {
+        // Create temporary board to try to solve on
+        MySudokuModel solve_board = new MySudokuModel(this);
+
+        // If solve was possible update board and return true
+        if(solve_board.solve_rec() == 1) {
+            // Create copy of board for property change event
+            int[][] old_board_array = new int[9][9];
+            for(int row = 0; row < 9; row++) {
+                for(int col = 0; col < 9; col++) {
+                    old_board_array[row][col] = board[row][col];
+                }
+            }
+    
+            // Update board with solution
+            setBoard(solve_board);
+    
+            // Fire property change event
+            pcs.firePropertyChange("board", old_board_array, board);
+ 
+            // Solution found
+            return true;
+        }
+        else {
+            // No solution found
+            return false;
+        }
+    }
+
+    // Recursive solve algorithm
+    public int unique = 0;
+    public int solve_rec() {
+        // Get position of most constrained box
+        int[] box_pos = this.get_most_constrained_box();
+
+        // Check if get_most_constrained_box returned -1, the the board is full and solution has been found
+        if(box_pos[0] == -1) {
+            // Check if the solution should be unique, then set uniquw to 0 so the next solution will be accepted
+            if(unique == 1) {
+                unique = 0;
+                return 0;
+            }
+            else {
+                return 1;
+            }
+        }
+
+        // Iterate over possible numbers
+        for( int i = 1; i < 10; i++) {
+            // If number legal, set board number and call itself 
+            if(this.isLegal(box_pos[0], box_pos[1], i)) {
+                this.setBoard(box_pos[0], box_pos[1], i);
+                // If 1 is returned, solution has been found
+                if(this.solve_rec() == 1) return 1;
+            }
+        }
+
+        // If no solution was found, set box to 0 and return
+        this.setBoard(box_pos[0], box_pos[1], 0);
+        return 0;
+    }
+
+    // Check if board is solveable
+    public boolean isSolvable() {
+        MySudokuModel tmp_board = new MySudokuModel(this);
+
+        return tmp_board.solve();
+    }
+
+    // Check if board is unique
+    public boolean isUnique() {
+        MySudokuModel tmp_board = new MySudokuModel(this);
+        tmp_board.unique = 1;
+        return !tmp_board.solve();
+
+    }
+    
+}

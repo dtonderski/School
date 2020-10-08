@@ -1,0 +1,147 @@
+
+import java.awt.*;
+import java.beans.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
+
+
+public class MySudokuView extends JPanel implements PropertyChangeListener{
+	
+	//lägger till variabeln model
+	protected SudokuModel model;
+	
+	//initialiserar brädet
+	private JPanel board = new JPanel();
+	//initialiserar de 9 blocken
+	JPanel[][] boxes = new JPanel[3][3];
+	//initialiserar rutorna
+	squares[][] squares = new squares[9][9];
+	//färg till bakgrunden när rutan är inaktiv
+	private Color disabledBackgroundColour = new Color((float) 0.93,(float) 0.93,(float) 0.93);
+	//Default border
+	JTextField border = new JTextField("2");
+	private Border DefaultBorder = border.getBorder();
+	
+
+	public void propertyChange(PropertyChangeEvent e){
+		//om e inte är IndexedPropertyChangeEvent så körs metoden repaintAll
+		if(!(e instanceof IndexedPropertyChangeEvent)){
+			repaintAll();
+		}
+		//annars görs e om till en IndexedPropertyChangeEvent och repaintSquare körs på den ändrowe rutan
+		if(e instanceof IndexedPropertyChangeEvent){
+			IndexedPropertyChangeEvent ev = (IndexedPropertyChangeEvent) e;
+			repaintSquare(ev.getIndex()/9, ev.getIndex()%9);
+		}
+	}
+	
+	//ritar om en ruta genom att få in dess värde från modellen
+	public void repaintSquare(int row,int col){
+		//om rutan är blank blir den blank, vit och enabled
+		if(model.getBoard(row,col)==0){
+			squares[row][col].setText("");
+			squares[row][col].setEnabled(true);
+			squares[row][col].setBackground(Color.white);
+		}
+		//annars är den ifylld, så den fylls i med rätt värde, blir grå och disabled
+		else{
+			squares[row][col].setText(Integer.toString(model.getBoard(row,col)));
+			squares[row][col].setEnabled(false);
+			squares[row][col].setBackground(disabledBackgroundColour);
+		}
+
+	}
+	
+	//kör repaintSquare på alla rutor
+	public void repaintAll(){
+		for(int row=0;row<9;row++){
+			for(int col=0;col<9;col++){ 
+				repaintSquare(row,col);
+			}
+		}
+
+	}
+
+	
+	//konstruktor för MySudokuView
+	public MySudokuView(SudokuModel m, SudokuController c){
+		//sätter bakgrunden till vitt
+		setBackground(Color.white);
+		//sätter JPaneln board till en JPanel med 3x3 GridLayout
+	    board = new JPanel(new GridLayout(3, 3));
+	    //tar bort lyssnare från eventuell gammal modell
+		if(model!=null){
+			model.removePropertyChangeListener(this);
+		}
+		//sätter variabeln model till parametern m
+		this.model = m;
+		//lägger till lyssnare till den nya modellen
+		model.addPropertyChangeListener(this);
+		
+		//initialiserar blocken, lägger till dem i board, sätter deras storlek, sätter de till en 3x3 GridLayout (för att sedan kunna sätta in rutor i dem), sätter border till svart, och gör dem synliga
+		for(int row=0;row<3;row++){
+			for(int col=0;col<3;col++){
+				boxes[row][col]= new JPanel();
+				board.add(boxes[row][col]);
+				boxes[row][col].setPreferredSize(new Dimension(100,100));
+				boxes[row][col].setLayout(new GridLayout(3,3));
+				boxes[row][col].setBorder(new LineBorder(Color.black, 1));	
+				boxes[row][col].setVisible(true);
+				}
+		}
+		
+		//två variabler som behövs för att initialisera rutorna i rätt block
+		int blockcolumn;
+		int blockrow;
+		
+		//lägger till rutorna
+		for(int row=0;row<9;row++){
+			for(int col=0;col<9;col++){
+				//räknar ut i vilket block den aktualla rutan ska befinna sig i
+				blockcolumn= (col-col%3)/3;
+				blockrow=(row-row%3)/3;
+				//initaliserar rutan och lägger till den i rätt block
+				squares[row][col]= new squares(row,col);
+				boxes[blockrow][blockcolumn].add(squares[row][col]);
+				//lägger till KeyListener, om den skrivna texten har längen 0 (dvs. t.ex. backspace har tryckts), så sätts texten till 0, sedan körs c.input, om false returnas så sätts rutans border och textfärg till rött, och ett ljud spelas upp
+				squares[row][col].addKeyListener(new KeyAdapter() {
+					public void keyReleased(KeyEvent e) {
+						squares textField = (squares) e.getSource();
+						String text = textField.getText();
+						int row = textField.getRow();
+						int col = textField.getColumn();
+						textField.setBorder(DefaultBorder);
+						if(text.length()==0){
+							text="0";
+						}
+						if((!(c.input(row, col, text.charAt(0))))){
+							textField.setForeground(Color.RED);
+							textField.setBorder(new LineBorder(Color.red,1));	
+						    Toolkit.getDefaultToolkit().beep();     
+						}
+					}
+
+				});
+				//sätter alignment till center, gör rutan synlig, sätter text till blank, sätter enabled till true, sätter disabledtextcolor till black, sätter bakgrund till vitt
+				squares[row][col].setHorizontalAlignment(SwingConstants.CENTER);
+				squares[row][col].setVisible(true);
+				squares[row][col].setText("");
+				squares[row][col].setEnabled(true);
+				squares[row][col].setDisabledTextColor(Color.black);
+				squares[row][col].setBackground(Color.white);
+				//om det finns ett nummer i den aktuella rutan så sätts det in i modellen och rutan blir grå och disabled
+				if(model.getBoard(row,col)!=0){
+					squares[row][col].setText(Integer.toString(model.getBoard(row,col)));
+					squares[row][col].setEnabled(false);
+					squares[row][col].setBackground(disabledBackgroundColour);
+				}
+			}
+		}
+		//lägger till brädan
+		add(board);
+		//gör brädan synlig
+		setVisible(true);
+	}
+}
+

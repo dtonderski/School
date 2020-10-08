@@ -1,0 +1,163 @@
+
+
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import javax.swing.*;
+
+public class MySudokuController extends JPanel implements SudokuController{
+	
+	//lägger till variabeln model
+	private SudokuModel model;
+	
+	//initialiserar de tre knapparna
+	private JButton New = new JButton("New");
+	private JButton solve = new JButton("Solve");
+	private JButton undo = new JButton("Undo");
+
+	//initialiserar dialogrutan
+	private JFileChooser fc = new JFileChooser();
+	
+	//initialiserar variablerna hasThrownException och currentModel, som används när man definierar knappen New
+	private boolean hasThrownException;
+	MySudokuModel currentModel=new MySudokuModel();
+
+	//lägger till listan moves, som behövs vid undo
+	List <Move> moves = new ArrayList<>();
+	
+
+	
+	public MySudokuController(SudokuModel m){
+		//sätter model till parametern m
+		model=m;
+		//sätter originalModel, som behövs vid solve
+		MySudokuModel originalModel = new MySudokuModel((MySudokuModel)m);
+		//sätter layouten till FlowLayout
+		setLayout(new FlowLayout());
+		//lägger till de tre knapparna
+		add(New);add(solve);add(undo);
+		//lägger till metoden undo till knappen undo
+		undo.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				undo();
+			}
+		});
+		
+		//lägger till lyssnare till knappen solve
+	    solve.addActionListener(new ActionListener() {
+	    	//om knappen har tryckts så försöker den lösa den aktuella modellen, annars så löser den originalModel och sätter den aktuella modellen till originalModel
+		      public void actionPerformed(ActionEvent e) {
+
+		    	  if(model.isSolvable()){
+		    		  model.solve();
+		    	  }
+		    	  else{
+		    		  originalModel.solve();
+			    	  model.clear();
+			    	  model.setBoard(originalModel.toString());
+		    	  }
+		      }
+	    });
+	    
+	    //sätter dialogrutans titel till "Välj en fil:" och den aktuella katalogen till Sudoku-katalogen
+		fc.setDialogTitle("Välj en fil:");
+		fc.setCurrentDirectory(new java.io.File(System.getProperty("user.dir")));
+
+		//lägger till lyssnare till knappen New
+	    New.addActionListener(new ActionListener(){
+	    	//Om new har tryckts så sätts currentModel till den aktuella modellen och dialogrutan öppnas
+	    	public void actionPerformed(ActionEvent e) {
+	    		currentModel.clear();
+	    		currentModel.setBoard((MySudokuModel) model);
+	    		if(fc.showOpenDialog(New)==JFileChooser.APPROVE_OPTION){
+	    			//läser av filens path och försöker öppna den
+	    			try{
+	    				Scanner scanner = new Scanner(new File(fc.getSelectedFile().getAbsolutePath()));
+		    		    String indata = "";
+		    		    while (scanner.hasNextLine()){
+		    		    	indata += scanner.nextLine() + '\n';
+		    		    }
+		    		    
+		    		    //försöker sätta modellen till datan som angavs i filen, och kollar sedan om det är lösbart
+		    		    try{
+		    		    	model.clear();
+			    		    model.setBoard(indata);
+			    		    if(!(model.isSolvable())){
+			    		    	throw new IllegalArgumentException("Sudokut är inte lösbart!");
+			    		    }
+		    		    }
+		    		    
+		    		    //om det inte går att sätta modellen till datan från filen, eller sudokut inte är lösbar, så ska "Olagligt sudoku" och 
+		    		    //en IllegalArgumentException skrivas ut, modellen ska återställas, och hasThrownException ska sättas till true
+		    		    
+		    		    catch(IllegalArgumentException e2){
+		    		    	System.out.println("Olagligt sudoku, " + e2);
+		    		    	model.clear();
+		    		    	model.setBoard((MySudokuModel) currentModel);
+		    				hasThrownException=true;
+
+		    		    }
+	    			}
+	    			//om filen inte hittades så ska "Filen hittades inte!" skrivas ut och hasThrownException sättas till true
+	    			catch (FileNotFoundException e1){
+	    				System.out.println("Filen hittades inte!");
+	    				hasThrownException=true;
+	    			}
+	    			//om hasThrownException är false, dvs. ingen exception har throwats, så ska man kolla om sudokut är unikt, om det inte är det så ska
+	    			//"Sudokut är inte unikt!" skrivas ut, annars ska originalModel sättas till den aktuella modellen
+	    			if(hasThrownException==false){
+
+	    			}
+	    			//hasThrownException ska återställas till false
+    				hasThrownException=false;
+
+
+	    		}
+	    	}
+	    });
+	}
+	
+	//undo återställer det senaste draget genom att om listan moves inte är tom ta den sista moven i listan och sätta rutan den beskriver till det gamla värdet.
+	//Sedan tar den bort den sista moven i listan
+	public void undo(){
+		if(moves.size()!=0){
+			model.setBoard(moves.get(moves.size()-1).getRow(), moves.get(moves.size()-1).getColumn(), moves.get(moves.size()-1).getOldValue());
+			moves.remove(moves.size()-1);
+		}
+
+	}
+
+
+	
+
+	//Deklarerar en int oldValue som behövs i input      
+	int oldValue;
+	@Override
+	public boolean input(int row, int col, char value) {
+		//Om value inte är en siffra så returnas false
+		if(!(Character.isDigit(value))){
+			return false;
+		}
+		//annars sätter metoden oldValue till den aktuella modellens värde i den angivna rutan och försöker sedan sätta in det nya värdet i rutan
+		try{
+			oldValue = model.getBoard(row,col);
+			model.setBoard(row,col,Character.getNumericValue(value));
+			//om det nya värdet inte är lika med det gamla värdet så läggs draget till i listan moves
+			if(oldValue!=model.getBoard(row, col)){
+				moves.add(new Move(oldValue, model.getBoard(row, col), row, col));
+			}
+			//om inget throwade en exception så returnas true
+			return true;
+		}
+		//om det inte går så skrivs en exception ut och false returnas
+		catch(Exception e){
+			System.out.println(e);
+			return false;
+		}
+	}
+
+}

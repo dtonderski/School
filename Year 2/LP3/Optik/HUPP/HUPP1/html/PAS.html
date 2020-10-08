@@ -1,0 +1,113 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PAS</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-02-04"><meta name="DC.source" content="PAS.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> E2=PAS(E1,L,N,a,lambda_noll,n_medium)
+
+<span class="comment">% Varje sampelpunkt i k-planet motsvarar en plan v&aring;g med en viss riktning (kx,ky,kz)</span>
+delta_k=2*pi/(N*a); <span class="comment">% samplingsavst&aring;nd i k-planet *** Klar</span>
+kxvekt=-N/2*delta_k:delta_k:(N/2-1)*delta_k; <span class="comment">% vektor med sampelpositioner i kx-led</span>
+kyvekt=kxvekt; <span class="comment">% och ky-led</span>
+[kxmat,kymat]=meshgrid(kxvekt,kyvekt); <span class="comment">% k-vektorns x- resp y-komponent i varje sampelpunkt i k-planet</span>
+
+k=2*pi*n_medium/lambda_noll; <span class="comment">% k-vektorns l&auml;ngd (skal&auml;r) f&ouml;r en plan v&aring;g i ett material med brytningsindex n_medium *** Klar</span>
+kzmat=sqrt(k^2-kxmat.^2-kymat.^2); <span class="comment">% k-vektorns z-komponent i varje sampelpunkt i k-planet *** Klar (Obs! Matlab till&aring;ter att en skal&auml;r direkt adderas/subtraheras med matris, man beh&ouml;ver allts&aring; tex inte skriva "skal&auml;r*ones(N,N)-matris")</span>
+
+fasfaktor_propagation=exp(1i* kzmat*L); <span class="comment">% faktorn varje sampelpunkt i k-planet (som ju motsvarar plan v&aring;g i viss riktning) multas med f&ouml;r att propagera str&auml;ckan L i z-led *** Klar</span>
+
+A= a^2/(2*pi)^2*fft2c(E1); <span class="comment">% Planv&aring;gsspektrum i Plan 1 *** Klar</span>
+
+B=A.*fasfaktor_propagation; <span class="comment">% Planv&aring;gsspektrum i Plan 2 (Planv&aring;gsspektrum i Plan 1 multat med fasfaktorn f&ouml;r propagation f&ouml;r varje plan v&aring;g)</span>
+
+E2= delta_k^2*N^2 *ifft2c(B); <span class="comment">% *** Klar</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in PAS (line 4)
+delta_k=2*pi/(N*a); % samplingsavst&aring;nd i k-planet *** Klar
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function E2=PAS(E1,L,N,a,lambda_noll,n_medium)
+
+% Varje sampelpunkt i k-planet motsvarar en plan våg med en viss riktning (kx,ky,kz)
+delta_k=2*pi/(N*a); % samplingsavstånd i k-planet *** Klar
+kxvekt=-N/2*delta_k:delta_k:(N/2-1)*delta_k; % vektor med sampelpositioner i kx-led
+kyvekt=kxvekt; % och ky-led
+[kxmat,kymat]=meshgrid(kxvekt,kyvekt); % k-vektorns x- resp y-komponent i varje sampelpunkt i k-planet
+
+k=2*pi*n_medium/lambda_noll; % k-vektorns längd (skalär) för en plan våg i ett material med brytningsindex n_medium *** Klar
+kzmat=sqrt(k^2-kxmat.^2-kymat.^2); % k-vektorns z-komponent i varje sampelpunkt i k-planet *** Klar (Obs! Matlab tillåter att en skalär direkt adderas/subtraheras med matris, man behöver alltså tex inte skriva "skalär*ones(N,N)-matris")
+
+fasfaktor_propagation=exp(1i* kzmat*L); % faktorn varje sampelpunkt i k-planet (som ju motsvarar plan våg i viss riktning) multas med för att propagera sträckan L i z-led *** Klar
+
+A= a^2/(2*pi)^2*fft2c(E1); % Planvågsspektrum i Plan 1 *** Klar
+
+B=A.*fasfaktor_propagation; % Planvågsspektrum i Plan 2 (Planvågsspektrum i Plan 1 multat med fasfaktorn för propagation för varje plan våg)
+
+E2= delta_k^2*N^2 *ifft2c(B); % *** Klar
+
+##### SOURCE END #####
+--></body></html>
