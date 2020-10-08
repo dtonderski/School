@@ -1,0 +1,32 @@
+
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    \begin{verbatim}
+function matris = J_ret(alfa, phi)
+    retarderingsmatris = [exp(j*phi) 0; 0 1];
+    matris = J_proj(-alfa)*retarderingsmatris*J_proj(alfa);
+end
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Not enough input arguments.
+
+Error in J_ret (line 2)
+    retarderingsmatris = [exp(j*phi) 0; 0 1];
+\end{verbatim} \color{black}
+    
+
+
+\end{document}
+    

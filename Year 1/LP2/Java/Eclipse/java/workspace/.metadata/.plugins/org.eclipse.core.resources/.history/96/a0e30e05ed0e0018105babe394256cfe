@@ -1,0 +1,119 @@
+package controller;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import javax.swing.*;
+import model.*;
+
+public class MySudokuController extends JPanel implements SudokuController{
+	private JButton New = new JButton("New");
+	private JButton solve = new JButton("Solve");
+	private SudokuModel model;
+	private JFileChooser fc = new JFileChooser();
+	MySudokuModel currentModel=new MySudokuModel();
+	private boolean hasThrownException;
+	
+	public MySudokuController(SudokuModel m){
+		
+		model=m;
+		MySudokuModel originalModel = new MySudokuModel((MySudokuModel)m);
+		setLayout(new FlowLayout());
+		add(New);
+		add(solve);		
+	    solve.addActionListener(new ActionListener() {
+		      public void actionPerformed(ActionEvent e) {
+
+		    	  if(model.isSolvable()){
+		    		  model.solve();
+		    	  }
+		    	  else{
+		    		  originalModel.solve();
+			    	  model.clear();
+			    	  model.setBoard(originalModel.toString());
+		    	  }
+		      }
+	    });
+	    
+		fc.setDialogTitle("Välj en fil:");
+		fc.setCurrentDirectory(new java.io.File(System.getProperty("user.dir")));
+
+	    New.addActionListener(new ActionListener(){
+	    	public void actionPerformed(ActionEvent e) {
+	    		currentModel.clear();
+	    		currentModel.setBoard(model.toString());
+	    		if(fc.showOpenDialog(New)==JFileChooser.APPROVE_OPTION){
+	    			try{
+	    				Scanner sc = new Scanner(new File(fc.getSelectedFile().getAbsolutePath()));
+		    		    String input = "";
+		    		    while (sc.hasNextLine()){
+		    		    	input += sc.nextLine() + '\n';
+		    		    }
+		    		    try{
+		    		    	model.clear();
+			    		    model.setBoard(input);
+		    		    }
+		    		    catch(IllegalArgumentException e2){
+		    		    	System.out.println("Olagligt sudoku, " + e2);
+		    		    	model.clear();
+		    		    	model.setBoard(currentModel.toString());
+		    				hasThrownException=true;
+
+		    		    }
+	    			}
+	    			catch (FileNotFoundException e1){
+	    				System.out.println("Filen hittades inte!");
+	    				hasThrownException=true;
+	    			}
+	    			if(hasThrownException==false){
+		    			if(!(model.isSolvable())){
+		    				System.out.println("The Sudoku is not solvable!");
+		    				
+		    			}
+		    			else if(!(model.isUnique())){
+		    				System.out.println("The Sudoku is not unique!");
+		    			}
+		    			else{
+		    				originalModel.clear();
+		    				originalModel.setBoard(model.toString());
+		    			}
+	    			}
+    				hasThrownException=false;
+
+
+	    		}
+	    	}
+	    });
+	    makeSolvable.addActionListener(new ActionListener(){
+	    	public void actionPerformed(ActionEvent e){
+	    	}
+	    });
+	}
+	
+	public void readFile(){
+		
+	}
+
+	
+
+		      
+	int oldValue;
+	@Override
+	public boolean input(int row, int col, char value) {
+		if(!(Character.isDigit(value))){
+			return false;
+		}
+		try{
+			model.setBoard(row,col,Character.getNumericValue(value));
+			return true;
+		}
+		catch(Exception e){
+			return false;
+		}
+	}
+
+}

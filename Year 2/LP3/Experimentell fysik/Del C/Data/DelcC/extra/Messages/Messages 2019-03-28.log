@@ -1,0 +1,53 @@
+1	10:41:00	Realtime started	
+1	13:03:51	Not all gaps were spline-filled	No gaps were spline-filled. They were all longer than 10 frames.  To adjust the maximum gap length for this measurement:     Right click a trajectory > Gap fill trajectory > Gap fill settings.  To adjust the maximum gap length for future measurements:     Go to Tools > Project Options and navigate to Processing > Trajectories. 
+1	13:03:51	File created	
+1	13:04:11	File closed	
+1	13:04:12	Realtime started	
+1	13:04:29	Recalibration recommended	Camera 1 has very few contributions to the 3D reconstruction.
+1	13:04:29	File created	
+1	13:04:34	File closed	
+1	13:04:35	Realtime started	
+1	13:04:51	File created	
+1	13:11:30	File closed	
+1	13:11:31	Realtime started	
+1	13:11:56	Not all gaps were spline-filled	One gap out of 4 was spline-filled. The other 3 gaps were longer than 10 frames.  To adjust the maximum gap length for this measurement:     Right click a trajectory > Gap fill trajectory > Gap fill settings.  To adjust the maximum gap length for future measurements:     Go to Tools > Project Options and navigate to Processing > Trajectories. 
+1	13:11:56	File created	
+1	13:12:13	File closed	
+1	13:12:15	Realtime started	
+1	13:12:24	File created	
+1	13:12:43	File closed	
+1	13:12:44	Realtime started	
+1	13:12:55	Not all gaps were spline-filled	13 gaps out of 16 were spline-filled. The other 3 gaps were longer than 10 frames.  To adjust the maximum gap length for this measurement:     Right click a trajectory > Gap fill trajectory > Gap fill settings.  To adjust the maximum gap length for future measurements:     Go to Tools > Project Options and navigate to Processing > Trajectories. 
+1	13:12:55	File created	
+1	13:15:34	File closed	
+1	13:15:36	Realtime started	
+1	13:17:28	Calibration started	
+1	13:17:29	Calibration finished after 0.7171 seconds	
+1	13:17:29	File created	
+1	13:17:30	File saved as \\file00.chalmers.se\home\davton\.win\My Documents\extra\Calibrations\20190328_131712.qca	
+1	13:17:33	File closed	
+1	13:17:40	Realtime started	
+1	13:19:19	Calibration started	
+1	13:19:19	Calibration finished after 0.4001 seconds	
+1	13:19:20	File created	
+1	13:19:20	File saved as \\file00.chalmers.se\home\davton\.win\My Documents\extra\Calibrations\20190328_131858.qca	
+1	13:19:24	File closed	
+1	13:19:26	Realtime started	
+1	13:19:56	Calibration started	
+1	13:19:56	Calibration finished after 0.2531 seconds	
+1	13:19:56	File created	
+1	13:19:57	File saved as \\file00.chalmers.se\home\davton\.win\My Documents\extra\Calibrations\20190328_131934.qca	
+1	13:20:03	File closed	
+1	13:20:06	Realtime started	
+1	13:20:36	Calibration started	
+1	13:20:36	Calibration finished after 0.3074 seconds	
+1	13:20:37	File created	
+1	13:20:37	File saved as \\file00.chalmers.se\home\davton\.win\My Documents\extra\Calibrations\20190328_132014.qca	
+1	13:20:41	File closed	
+1	13:20:44	Realtime started	
+1	13:32:58	Not all gaps were spline-filled	The gap was not spline-filled because it was longer than 10 frames.  To adjust the maximum gap length for this measurement:     Right click a trajectory > Gap fill trajectory > Gap fill settings.  To adjust the maximum gap length for future measurements:     Go to Tools > Project Options and navigate to Processing > Trajectories. 
+1	13:32:58	File created	
+1	13:37:18	File closed	
+1	13:37:19	Realtime started	
+1	13:37:31	Not all gaps were spline-filled	3 gaps out of 4 were spline-filled. One gap was longer than 10 frames.  To adjust the maximum gap length for this measurement:     Right click a trajectory > Gap fill trajectory > Gap fill settings.  To adjust the maximum gap length for future measurements:     Go to Tools > Project Options and navigate to Processing > Trajectories. 
+1	13:37:31	File created	

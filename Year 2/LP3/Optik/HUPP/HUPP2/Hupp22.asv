@@ -1,0 +1,11 @@
+clear all; clc
+E_in = [1;0];
+%%
+J_ret0 = J_ret(-pi/4, pi/2);
+J_spegel = [-1 0; 0 1]; %Inverterar x-komponenten av ljuset (som studsar)
+J_ret1 = J_ret(-pi/4, pi/2);
+E_2 = J_ret0*E_in
+E_3 =  J_spegel*E_2
+E_4 = J_ret1*E_3
+
+%E_2 = %Efter kvartsvågsplattan

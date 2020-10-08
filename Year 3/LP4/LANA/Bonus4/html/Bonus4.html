@@ -1,0 +1,402 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bonus4</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-05-23"><meta name="DC.source" content="Bonus4.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Skapar de n&ouml;dv&auml;ndiga matriserna, vektorerna och variablerna</a></li><li><a href="#2">Plottar normen av felen mot n, normen av residualerna mot n, konditionstalen mot n och normen av felen mot konditionstalen</a></li><li><a href="#3">Slutsatser fr&aring;n graferna</a></li><li><a href="#5">Plottar 2</a></li></ul></div><h2 id="1">Skapar de n&ouml;dv&auml;ndiga matriserna, vektorerna och variablerna</h2><pre class="codeinput"><span class="comment">%Skapar cell-arrayer med de f&ouml;rsta Hilbertmatriserna, x-vektorerna,</span>
+<span class="comment">%b-vektorerna, xhat-vektorerna, fel-vektorerna och residual-vektorerna och</span>
+<span class="comment">%l&auml;gger i de f&ouml;rsta elementen</span>
+H = {hilb(1)};
+x = {[1]};
+b = {H{1}*x{1}};
+xhat = {H{1}\b{1}};
+fel = {xhat{1}-x{1}};
+r = {b{1}-H{1}*xhat{1}};
+
+<span class="comment">%Skapar arrayer med normena av felen, normena av residualen och</span>
+<span class="comment">%konditionstalen och l&auml;gger i de f&ouml;rsta v&auml;rdena</span>
+normfel = [norm(xhat{1}-x{1})];
+normr = [norm(r{1})];
+
+<span class="comment">%Anger toleransen som beh&ouml;vs f&ouml;r att ber&auml;kna det maximala n-v&auml;rdet</span>
+tol = 1e-2;
+
+<span class="comment">%Skapar en array som kommer att inneh&aring;lla alla n-v&auml;rden (beh&ouml;vs f&ouml;r att</span>
+<span class="comment">%plotta mot n)</span>
+N = [1];
+
+<span class="comment">%Skapar en array som ska inneh&aring;lla konditionstalen till hilbertmatriserna</span>
+condtal = [cond(H{1})];
+
+
+<span class="comment">%B&ouml;rjar while-loopen fr&aring;n i=2</span>
+i = 2;
+
+<span class="comment">%Skapar de n&ouml;dv&auml;ndiga matriserna, vektorerna och talen f&ouml;r i = 2, ..., n</span>
+<span class="comment">%till normfelet &auml;r st&ouml;rre en sqrt(i)*tol. Termen sqrt(i) kommer fr&aring;n att</span>
+<span class="comment">%normen av vektorn x &auml;r sqrt(k)  och vi &auml;r intresserade av det relativa</span>
+<span class="comment">%felet</span>
+<span class="keyword">while</span> normfel(i-1)/sqrt(i)&lt;tol
+    <span class="comment">%Fyller ut cell-arrayerna med Hilbertmatriserna, x-vektorerna,</span>
+    <span class="comment">%b-vektorerna, xhat-vektorerna, fel-vektorerna och residual-vektorerna</span>
+    H{i} = hilb(i);
+    <span class="comment">%En for-loop skapar x-vektorn f&ouml;r varje i</span>
+    x{i} = [1];
+    <span class="keyword">for</span> k = 2:i
+        x{i} = [x{i};1];
+        k = +k;
+    <span class="keyword">end</span>
+
+    b{i} = H{i}*x{i};
+    xhat{i} = H{i}\b{i};
+    fel{i} = xhat{i}-x{1};
+    r{i} = b{i}-H{i}*xhat{i};
+
+    <span class="comment">%Fyller ut arrayerna med normerna av felen och normerna av residualerna</span>
+    normfel = [normfel,norm(xhat{i}-x{i})];
+    normr = [normr,norm(r{i})];
+
+    <span class="comment">%Fyller ut arrayen med alla n-v&auml;rden</span>
+    N = [N,i];
+
+    <span class="comment">%Fyller ut arrayen med alla konditionstal</span>
+    condtal = [condtal, cond(H{i})];
+
+    i = i+1;
+<span class="keyword">end</span>
+n = i-1; <span class="comment">% 12</span>
+<span class="comment">%Det maximala n f&ouml;r vilket approximationen &auml;r anv&auml;ndbar bed&ouml;ms allts&aring; att</span>
+<span class="comment">%vara 12</span>
+</pre><h2 id="2">Plottar normen av felen mot n, normen av residualerna mot n, konditionstalen mot n och normen av felen mot konditionstalen</h2><pre class="codeinput"><span class="comment">%S&auml;tter manuellt figurens storlek</span>
+f = figure(1);
+FS = get(f,<span class="string">'Position'</span>);
+set(f,<span class="string">'Position'</span>,[FS(1) FS(2) FS(3)*1.5 FS(4)*1.5])
+
+<span class="comment">%Plottar normen av felen mot n, semilogy</span>
+subplot(2,2,1)
+semilogy(N,normfel, <span class="string">'blue'</span>)
+xlabel([<span class="string">'$n$'</span>],<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,13)
+title(<span class="string">'$\textnormal{Normen av felen (semilogy)}$'</span>,<span class="string">'fontsize'</span>,13, <span class="keyword">...</span>
+    <span class="string">'Interpreter'</span>,<span class="string">'latex'</span>)
+ylabel(<span class="string">'$||\hat{x}-x||_2$'</span>,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,13)
+
+<span class="comment">%Plottar normen av residualerna mot n, semilogy</span>
+subplot(2,2,2)
+plot(N,normr, <span class="string">'blue'</span>)
+xlabel([<span class="string">'$n$'</span>],<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,13)
+title(<span class="string">'$\textnormal{Normen av residualerna}$'</span>,<span class="string">'fontsize'</span>,13, <span class="keyword">...</span>
+    <span class="string">'Interpreter'</span>,<span class="string">'latex'</span>)
+ylabel(<span class="string">'$||r||_2$'</span>,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,13)
+
+<span class="comment">%Plottar konditionstalen mot n, semilogy</span>
+subplot(2,2,3)
+semilogy(N,condtal, <span class="string">'blue'</span>)
+xlabel([<span class="string">'$n$'</span>],<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,13)
+title(<span class="string">'$\textnormal{Konditionstalen (semilogy)}$'</span>,<span class="string">'fontsize'</span>,13, <span class="keyword">...</span>
+    <span class="string">'Interpreter'</span>,<span class="string">'latex'</span>)
+ylabel(<span class="string">'$\kappa(H)$'</span>,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,13)
+
+<span class="comment">%Plottar normen av felen mot konditionstalen, OBS: loglog</span>
+subplot(2,2,4)
+loglog(condtal,normfel, <span class="string">'blue'</span>)
+xlabel(<span class="string">'$\kappa(H)$'</span>,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,13)
+title(<span class="string">'$\textnormal{Normen av felen mot konditionstalen (loglog)}$'</span>, <span class="keyword">...</span>
+    <span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,13)
+ylabel(<span class="string">'$||\hat{x}-x||_2$'</span>,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,13)
+</pre><img vspace="5" hspace="5" src="Bonus4_01.png" alt=""> <h2 id="3">Slutsatser fr&aring;n graferna</h2><p>Residualen verkar inte vara ett bra m&aring;tt p&aring; felets storlek i allm&auml;nhet. Om man dock plottar till t.ex. n=100 s&aring; ser man att n&auml;r felet blir ovanligt stort s&aring; blir ocks&aring; residualen ovanligt stor, residualens kurva f&ouml;ljer ungef&auml;r felets kurva. Detta fenomen &auml;r dock inte sant f&ouml;r n&lt;13.</p><p>En linj&auml;ranpassning av de logaritmerade v&auml;rdena av normalen av felet mot de logaritmerade v&auml;rdena av konditionstalet ger en linje med lutning ungef&auml;r 1. Detta betyder att normalen av felet v&auml;xer linj&auml;rt med konditionstalet.</p><p>Grafen som relaterar konditionstalet till n verkar vara en exponentialfunktion. L&aring;t oss testa detta genom att ans&auml;tta <img src="Bonus4_eq05782332893723991141.png" alt="$\kappa = a*e^{b*n}$"> och l&ouml;sa ut a och b genom fit-funktionen i MATLAB f&ouml;r olika n och ta medelv&auml;rdet av koefficienterna.</p><pre class="codeinput">k=[];
+<span class="keyword">for</span> i = 2:n
+    f=fit(N(1:i)',condtal(1:i)',<span class="string">'exp1'</span>);
+    k=[k, coeffvalues(f)'];
+<span class="keyword">end</span>
+k
+a1=mean(k(1,:))
+b2=mean(k(2,:))
+</pre><pre class="codeoutput">
+k =
+
+  Columns 1 through 7
+
+    0.0519    0.0262    0.0202    0.0174    0.0157    0.0145    0.0135
+    2.9591    3.3014    3.3877    3.4249    3.4458    3.4593    3.4687
+
+  Columns 8 through 11
+
+    0.0128    0.0122    0.0119    0.0201
+    3.4757    3.4811    3.4836    3.4359
+
+
+a1 =
+
+    0.0197
+
+
+b2 =
+
+    3.3930
+
+</pre><p>Koefficienterna verkar allts&aring; vara ungef&auml;r a= 0.02, b= 3.4. Som vi ser &auml;r det inte mycket varians mellan koefficienterna f&ouml;r de olika n-v&auml;rdena. D&auml;rmed kan vi med ganska stor sannolikhet s&auml;ga att <img src="Bonus4_eq14497300230856314563.png" alt="$\kappa \approx 0.02*e^{3.4*n}$">.</p><h2 id="5">Plottar 2</h2><p>Vi f&ouml;rs&ouml;ker hitta det exakta sambandet mellan condtal och normfel. Vi visade ovan att det sannolikt finns ett linj&auml;r samband f&ouml;r n som bed&ouml;ms vara rimliga, s&aring; vi f&ouml;rs&ouml;ker hitta det sambandet genom polyfit.</p><p>Sedan j&auml;mf&ouml;r vi med teorin. I boken Numerisk Analys finns sambandet:</p><p><img src="Bonus4_eq05440994454606642496.png" alt="$\frac{||\delta x||}{||x||} \leq \kappa*\frac{||\delta b||}{||b||}$"></p><p>Om vi antar att det finns ett linj&auml;rt samband p&aring; formen:</p><p><img src="Bonus4_eq16636030545070630971.png" alt="$a*\kappa=||\hat{x}-x||=||\delta x||$">,</p><p>s&aring; kan vi s&auml;tta in det i den teoriteska formeln och f&aring; sambandet:</p><p><img src="Bonus4_eq06099779368418790224.png" alt="$\frac{a}{||x||} \leq \frac{||\delta b||}{||b||}$">,</p><p>vilket leder till:</p><p><img src="Bonus4_eq10665812220108053188.png" alt="$a \leq \frac{||\delta b||*||x||}{||b||}$">.</p><p>D&aring; kan vi plotta a och <img src="Bonus4_eq00637038930843969931.png" alt="$\frac{||\delta b||*||x||}{||b||}$"> mot n och l&auml;tt kolla om sambandet st&auml;mmer.</p><pre class="codeinput"><span class="comment">%Vi b&ouml;rjar allts&aring; genom att hitta a med polyfit.</span>
+warning(<span class="string">'off'</span>);
+c = polyfit(condtal,normfel,1);
+<span class="comment">%Vi f&aring;r att a = 2.4698e-17. Nu m&aring;ste vi ber&auml;kna h&ouml;gerledet. Som vanligt</span>
+<span class="comment">%b&ouml;rjar vi med att skapa arrayer och l&auml;gga in de f&ouml;rsta v&auml;rdena. Sedan</span>
+<span class="comment">%anv&auml;nder vi en for-loop f&ouml;r att ber&auml;kna de resterande v&auml;rdena.</span>
+K = norm(H{1}*(xhat{1}-x{1}))*norm(x{1})/norm(b{1});
+a = 2.4698e-17;
+<span class="keyword">for</span> i = 2:n
+    K = [K, norm(H{i}*(xhat{i}-x{i}))*norm(x{i})/norm(b{i})];
+    a = [a,2.4698e-17];
+<span class="keyword">end</span>
+<span class="comment">%Nu plottar vi a mot N (svart) och K mot N (r&ouml;tt). Om v&aring;rt samband st&auml;mmer</span>
+<span class="comment">%s&aring; ska den svarta kurvan ligga 'under' den r&ouml;da.</span>
+
+hold <span class="string">on</span>
+figure(2)
+plot(N,a, <span class="string">'black'</span>)
+plot(N,K, <span class="string">'red'</span>)
+</pre><img vspace="5" hspace="5" src="Bonus4_02.png" alt=""> <p>Som vi ser ligger den r&ouml;da funktionen ovanf&ouml;r den svarta f&ouml;r alla <img src="Bonus4_eq04353142814879331523.png" alt="$n\geq 2$">. Resultatet st&auml;mmer inte f&ouml;r n=1 f&ouml;r att felet d&aring; &auml;r exakt lika med 0.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Skapar de nödvändiga matriserna, vektorerna och variablerna
+%Skapar cell-arrayer med de första Hilbertmatriserna, x-vektorerna,
+%b-vektorerna, xhat-vektorerna, fel-vektorerna och residual-vektorerna och
+%lägger i de första elementen
+H = {hilb(1)};
+x = {[1]};
+b = {H{1}*x{1}};
+xhat = {H{1}\b{1}};
+fel = {xhat{1}-x{1}};
+r = {b{1}-H{1}*xhat{1}};
+
+%Skapar arrayer med normena av felen, normena av residualen och
+%konditionstalen och lägger i de första värdena
+normfel = [norm(xhat{1}-x{1})];
+normr = [norm(r{1})];
+
+%Anger toleransen som behövs för att beräkna det maximala n-värdet
+tol = 1e-2;
+
+%Skapar en array som kommer att innehålla alla n-värden (behövs för att
+%plotta mot n)
+N = [1];
+
+%Skapar en array som ska innehålla konditionstalen till hilbertmatriserna
+condtal = [cond(H{1})];
+
+
+%Börjar while-loopen från i=2
+i = 2;
+
+%Skapar de nödvändiga matriserna, vektorerna och talen för i = 2, ..., n
+%till normfelet är större en sqrt(i)*tol. Termen sqrt(i) kommer från att
+%normen av vektorn x är sqrt(k)  och vi är intresserade av det relativa
+%felet
+while normfel(i-1)/sqrt(i)<tol
+    %Fyller ut cell-arrayerna med Hilbertmatriserna, x-vektorerna,
+    %b-vektorerna, xhat-vektorerna, fel-vektorerna och residual-vektorerna
+    H{i} = hilb(i);
+    %En for-loop skapar x-vektorn för varje i
+    x{i} = [1];
+    for k = 2:i
+        x{i} = [x{i};1];
+        k = +k;
+    end
+    
+    b{i} = H{i}*x{i};
+    xhat{i} = H{i}\b{i};
+    fel{i} = xhat{i}-x{1};
+    r{i} = b{i}-H{i}*xhat{i};
+    
+    %Fyller ut arrayerna med normerna av felen och normerna av residualerna
+    normfel = [normfel,norm(xhat{i}-x{i})];
+    normr = [normr,norm(r{i})];
+    
+    %Fyller ut arrayen med alla n-värden
+    N = [N,i];
+    
+    %Fyller ut arrayen med alla konditionstal
+    condtal = [condtal, cond(H{i})];
+
+    i = i+1;
+end
+n = i-1; % 12
+%Det maximala n för vilket approximationen är användbar bedöms alltså att 
+%vara 12
+
+%% Plottar normen av felen mot n, normen av residualerna mot n, konditionstalen mot n och normen av felen mot konditionstalen
+%Sätter manuellt figurens storlek
+f = figure(1);
+FS = get(f,'Position');
+set(f,'Position',[FS(1) FS(2) FS(3)*1.5 FS(4)*1.5])
+
+%Plottar normen av felen mot n, semilogy
+subplot(2,2,1)
+semilogy(N,normfel, 'blue')
+xlabel(['$n$'],'Interpreter','latex','fontsize',13)
+title('$\textnormal{Normen av felen (semilogy)}$','fontsize',13, ...
+    'Interpreter','latex')
+ylabel('$||\hat{x}-x||_2$','Interpreter','latex','fontsize',13)
+
+%Plottar normen av residualerna mot n, semilogy
+subplot(2,2,2)
+plot(N,normr, 'blue')
+xlabel(['$n$'],'Interpreter','latex','fontsize',13)
+title('$\textnormal{Normen av residualerna}$','fontsize',13, ...
+    'Interpreter','latex')
+ylabel('$||r||_2$','Interpreter','latex','fontsize',13)
+
+%Plottar konditionstalen mot n, semilogy
+subplot(2,2,3)
+semilogy(N,condtal, 'blue')
+xlabel(['$n$'],'Interpreter','latex','fontsize',13)
+title('$\textnormal{Konditionstalen (semilogy)}$','fontsize',13, ...
+    'Interpreter','latex')
+ylabel('$\kappa(H)$','Interpreter','latex','fontsize',13)
+
+%Plottar normen av felen mot konditionstalen, OBS: loglog
+subplot(2,2,4)
+loglog(condtal,normfel, 'blue')
+xlabel('$\kappa(H)$','Interpreter','latex','fontsize',13)
+title('$\textnormal{Normen av felen mot konditionstalen (loglog)}$', ...
+    'Interpreter','latex','fontsize',13)
+ylabel('$||\hat{x}-x||_2$','Interpreter','latex','fontsize',13)
+
+%% Slutsatser från graferna
+% Residualen verkar inte vara ett bra mått på felets storlek i allmänhet.
+% Om man dock plottar till t.ex. n=100 så ser man att när felet blir
+% ovanligt stort så blir också residualen ovanligt stor, residualens kurva
+% följer ungefär felets kurva. Detta fenomen är dock inte sant för n<13.
+%
+% En linjäranpassning av de logaritmerade värdena av normalen av felet mot 
+% de logaritmerade värdena av konditionstalet ger en linje med lutning
+% ungefär 1. Detta betyder att normalen av felet växer linjärt med
+% konditionstalet.
+%
+% Grafen som relaterar konditionstalet till n verkar vara en
+% exponentialfunktion. Låt oss testa detta genom att ansätta $\kappa =
+% a*e^{b*n}$ och lösa ut a och b genom fit-funktionen i MATLAB för olika n
+% och ta medelvärdet av koefficienterna.
+k=[];
+for i = 2:n
+    f=fit(N(1:i)',condtal(1:i)','exp1');
+    k=[k, coeffvalues(f)'];
+end
+k
+a1=mean(k(1,:))
+b2=mean(k(2,:))
+%%
+% Koefficienterna verkar alltså vara ungefär a= 0.02, b= 3.4. Som vi ser är
+% det inte mycket varians mellan koefficienterna för de olika n-värdena.
+% Därmed kan vi med ganska stor sannolikhet säga att
+% $\kappa \approx 0.02*e^{3.4*n}$.
+%% Plottar 2
+% Vi försöker hitta det exakta sambandet mellan condtal och normfel. Vi 
+% visade ovan att det sannolikt finns ett linjär samband för n som bedöms 
+% vara rimliga, så vi försöker hitta det sambandet genom polyfit. 
+%
+% Sedan jämför vi med teorin. I boken Numerisk Analys finns sambandet:
+%
+% $\frac{||\delta x||}{||x||} \leq \kappa*\frac{||\delta b||}{||b||}$
+%
+% Om vi antar att det finns ett linjärt samband på formen:
+%
+% $a*\kappa=||\hat{x}-x||=||\delta x||$,
+%
+% så kan vi sätta in det i den teoriteska formeln och få sambandet:
+%
+% $\frac{a}{||x||} \leq \frac{||\delta b||}{||b||}$,
+%
+% vilket leder till:
+%
+% $a \leq \frac{||\delta b||*||x||}{||b||}$.
+%
+% Då kan vi plotta a och $\frac{||\delta b||*||x||}{||b||}$ mot n och lätt
+% kolla om sambandet stämmer.
+%Vi börjar alltså genom att hitta a med polyfit.
+warning('off');
+c = polyfit(condtal,normfel,1);
+%Vi får att a = 2.4698e-17. Nu måste vi beräkna högerledet. Som vanligt
+%börjar vi med att skapa arrayer och lägga in de första värdena. Sedan
+%använder vi en for-loop för att beräkna de resterande värdena.
+K = norm(H{1}*(xhat{1}-x{1}))*norm(x{1})/norm(b{1});
+a = 2.4698e-17;
+for i = 2:n
+    K = [K, norm(H{i}*(xhat{i}-x{i}))*norm(x{i})/norm(b{i})];
+    a = [a,2.4698e-17];
+end
+%Nu plottar vi a mot N (svart) och K mot N (rött). Om vårt samband stämmer
+%så ska den svarta kurvan ligga 'under' den röda.
+
+hold on
+figure(2)
+plot(N,a, 'black')
+plot(N,K, 'red')
+%%
+% Som vi ser ligger den röda funktionen ovanför den svarta för alla $n\geq
+% 2$. Resultatet stämmer inte för n=1 för att felet då är exakt lika med 0.
+
+
+
+##### SOURCE END #####
+--></body></html>

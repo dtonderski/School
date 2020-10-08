@@ -1,0 +1,71 @@
+\documentclass{article}
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+\usepackage{siunitx}
+\usepackage{fancyvrb}
+\usepackage{graphicx}
+\usepackage[final]{pdfpages}
+\setboolean{@twoside}{false}
+
+\fvset{tabsize=4}
+\begin{document}
+	\title{Hupp2}
+	\author{David Tonderski\\davton\\davton@student.chalmers.se}
+	\date{}
+	\maketitle
+	
+\setcounter{subsection}{1}
+\setcounter{section}{1}
+\subsection{}
+Koden bifogas i avsnitt 2.b.
+\subsection{}
+
+Koden bifogas i avsnitt 2.c.\\\newline
+\indent{}\textbf{Fall i)}\\
+\indent{}$E_{ut}=(i,0), I_{ut}=1$\\\newline
+\indent{}\textbf{Fall ii)}\\
+\indent{}$E_{ut}=10^{-15}(-0.2+0.05i,0), I_{ut}=5\cdot10^{-32}$\\\newline
+\indent{}\textbf{Fall iii}\\
+\indent{}$E_{ut}=10^{-15}(-0.2+0.05i,0), I_{ut}=5\cdot10^{-32}$\\\newline
+\indent{}\textbf{Fall iv)}\\
+\indent{}$E_{ut}=(i,0), I_{ut}=1$
+\subsection{}
+Koden bifogas i avsnitt 2.d.\\\newline
+Intensiteten på spökbilden blir ungefär 0.15, alltså 15\% av det ingående fältets intensitet.
+\subsection{}
+Koden bifogas i avsnitt 2.e.\\\newline
+Om man vrider glasen vid papperslapparna \SI{90}{\degree} så blir den oönskade bildens intensitet ca. $7 \cdot 10^{-32}$ (den försvinner). Priset man får betala är att den önskade bildens intensitet minskar till ca. 0.85 av det utgående fältets densitet.
+
+\section{MATLAB}
+\setcounter{subsection}{1}
+\subsection{}
+\textbf{J\_pol.m}
+    \begin{Verbatim}
+function matris = J_pol( alfa )
+	polarisationsmatris=[1 0; 0 0];
+	matris = J_proj(-alfa) * polarisationsmatris * J_proj(alfa);
+end
+\end{Verbatim}
+\textbf{J\_ret.m}
+    \begin{Verbatim}
+function matris = J_ret(alfa, phi)
+	retarderingsmatris = [exp(j*phi) 0; 0 1];
+	matris = J_proj(-alfa)*retarderingsmatris*J_proj(alfa);
+end
+\end{Verbatim}
+\subsection{Hupp2c.m}
+Koden finns på nästa sida.
+
+\includepdf[pages=-]{hupp2c.pdf}
+\subsection{Hupp2d.m}
+Koden finns på nästa sida.
+
+\includepdf[pages=-]{hupp2d.pdf}
+\subsection{Hupp2e.m}
+Koden finns på nästa sida.
+\includepdf[pages=-]{hupp2e.pdf}
+
+
+
+
+
+\end{document}

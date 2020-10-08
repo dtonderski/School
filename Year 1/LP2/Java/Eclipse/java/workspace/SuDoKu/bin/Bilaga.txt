@@ -1,0 +1,1 @@
+﻿Tack för det snabba svaret! Det verkar vara det, nu har vi skrivit om isLegal så att den inte kastar en exception, och de allra flesta Sudokun löses nästan på direkten.

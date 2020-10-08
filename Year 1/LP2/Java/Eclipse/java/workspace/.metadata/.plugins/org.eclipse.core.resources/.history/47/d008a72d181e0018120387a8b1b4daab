@@ -1,0 +1,4 @@
+public abstract class D extends C implements B {
+public D(int i) {k = i;}
+public int m4(int i);
+}
