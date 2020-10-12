@@ -4,24 +4,22 @@ if iDataSet == 1
     if iSlope == 1
         alpha = 4 + sin(x/100) + cos(sqrt(2)*x/50);
     elseif iSlope == 2
-        alpha = 6 + 3*sin(x/75) + cos(sqrt(5)*x/30);
+        alpha = 5 + 3*sin(x/75) + cos(sqrt(5)*x/30);
     elseif iSlope == 3
-        alpha = 3 + 4*sin(x/40) + cos(sqrt(3)*x/60);
-    elseif iSlope == 3
-        alpha = 1 + -1*sin(x/100) + 1*cos(sqrt(9)*x/30);
+        alpha = 3 + -2*sin(x/100) - 2*cos(sqrt(7)*x/50);
     elseif iSlope == 4
-        alpha = 3 + -3*sin(x/80) + 1*cos(sqrt(10)*x/40);
+        alpha = 3 + -3*sin(x/80) + 1*cos(sqrt(2)*x/40);
     elseif iSlope == 5
         alpha = 3 + 3*sin(x/90) + 1*cos(sqrt(3)*x/40);
     elseif iSlope == 6
-        alpha = 3 + -4*sin(x/90) + -1*cos(sqrt(8)*x/70);
+        alpha = 3 + -4*sin(x/90) + -1*cos(sqrt(3)*x/70);
     elseif iSlope == 7
-        alpha = 5 + 4*sin(x/20) + -1*cos(sqrt(7)*x/70);
+        alpha = 5 + 4*sin(x/20) + -1*cos(sqrt(5)*x/70);
     elseif iSlope == 8
         alpha = 2 + -2*sin(x/90) + 1*cos(sqrt(2)*x/10);
     elseif iSlope == 9
-        alpha = 5 + 3*sin(x/30) + -1*cos(sqrt(7)*x/40);
-    elseif (iSlope== 10)
+        alpha = 5 + 3*sin(x/30) + -1*cos(sqrt(3)*x/40);
+    elseif iSlope== 10
         alpha = 3 + 2*sin(x/50) + cos(sqrt(2)*x/100);
     end
 % Validation
@@ -42,9 +40,9 @@ elseif iDataSet == 3
     if iSlope == 1
         alpha = 6 - sin(x/100) - cos(sqrt(7)*x/50);
     elseif iSlope == 2
-        alpha = 3 + -3*sin(x/50) + 1*cos(sqrt(6)*x/100);
+        alpha = 1 + -3*sin(x/50) + 1*cos(sqrt(6)*x/100);
     elseif iSlope == 3
-        alpha = 3 + -2*sin(x/100) + 1*cos(sqrt(3)*x/60);
+        alpha = 3 + -1*sin(x/100) + 1*cos(sqrt(3)*x/60);
     elseif iSlope == 4
         alpha = 2 + 4*sin(x/100) + -1*cos(sqrt(5)*x/20);
     elseif (iSlope == 5)

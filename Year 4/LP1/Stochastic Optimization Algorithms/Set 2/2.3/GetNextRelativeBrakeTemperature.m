@@ -1,8 +1,8 @@
-function deltaTB = GetNextRelativeBrakeTemperature(deltaTB,tau,CH,PP, dt)
-if PP < 0.01
-    deltaTB = deltaTB + dt*(-deltaTB/tau);
+function deltaBrakeTemperature = GetNextRelativeBrakeTemperature(deltaBrakeTemperature,tau,cH,pedalPressure, dt)
+if pedalPressure < 0.01
+    deltaBrakeTemperature = deltaBrakeTemperature + dt*(-deltaBrakeTemperature/tau);
 else
-    deltaTB = deltaTB + CH*PP*dt;
+    deltaBrakeTemperature = deltaBrakeTemperature + cH*pedalPressure*dt;
 end
 end
 

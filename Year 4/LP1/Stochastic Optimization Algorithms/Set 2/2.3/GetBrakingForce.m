@@ -1,8 +1,8 @@
-function breakingForce = GetBrakingForce(PP, TB, TMax, M, g)
-if TB < TMax - 100
-    breakingForce = M*g/20*PP;
+function brakingForce = GetBrakingForce(pedalPressure, brakeTemperature, maxTemperature, m, g)
+if brakeTemperature < maxTemperature - 100
+    brakingForce = m*g/20*pedalPressure;
 else
-    breakingForce = M*g/20*PP*exp(-(TB - (TMax - 100))/100);
+    brakingForce = m*g/20*pedalPressure*exp(-(brakeTemperature - (maxTemperature - 100))/100);
 end
 end
 
