@@ -51,7 +51,7 @@ while x < slopeLength
     elseif brakeTemperature > maxTemperature
         break
     end
-    [v,x] = GetNextVelocityAndPosition(v,x,gravityForce,brakingForce,engineBrakingForce,m,dt);
+    [v,x] = GetNextVelocityAndPosition(v,x,alpha,gravityForce,brakingForce,engineBrakingForce,m,dt);
     xArray = [xArray, x];
     vArray = [vArray, v];
 end

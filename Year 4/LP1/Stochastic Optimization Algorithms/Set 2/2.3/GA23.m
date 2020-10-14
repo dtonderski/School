@@ -7,10 +7,10 @@ creepMutationProbability = 1/numberOfGenes;
 ordinaryMutationProbability = 1/numberOfGenes;
 crossoverProbability = 0.3; 
 elitismCopies = 1;
-numberOfGenerations = 10000;
+numberOfGenerations = 500;
 weightRange = 10;
 creepRate = weightRange/4;
-numberOfRuns = 1;
+numberOfRuns = 20;
 slopeLength = 1000;
 
 pTournament = 0.9;
