@@ -1,0 +1,76 @@
+clear all; close all; clc;
+INF = 1e100;
+populationSize = 50;
+minChromosomeLength = 100;
+maxChromosomeLength = 200;
+constants = [1 3 10];
+numberOfConstants = length(constants);
+numberOfRegisters = 4;
+divisionByZeroResult = 1e10;
+numberOfGenerations = 10000;
+pTournament = 0.75;
+tournamentSize = 2;
+crossoverProbability = 0.5;
+elitismCopies = 1;
+maxLength = 300;
+%%
+fitness = zeros(populationSize, 1);
+population = InitializePopulation(populationSize, minChromosomeLength,...
+    maxChromosomeLength, numberOfRegisters, numberOfConstants);
+
+generationsSinceLastImprovement = 0;
+previousMaximumFitness = 0;
+for iGeneration = 1:numberOfGenerations
+    generationsSinceLastImprovement = generationsSinceLastImprovement + 1;
+    maximumFitness = -INF;
+    bestIndividualIndex = 0;
+    for i = 1:populationSize
+        chromosome = population(i).Chromosome;
+        fitness(i) = GetFitness(chromosome, constants, numberOfRegisters, divisionByZeroResult, maxLength);
+        if fitness(i) > maximumFitness
+            maximumFitness = fitness(i);
+            if maximumFitness > previousMaximumFitness
+                previousMaximumFitness = maximumFitness;
+                generationsSinceLastImprovement = 0;
+            end
+            bestIndividualIndex = i;
+        end
+    end
+    
+    tempPopulation = population;
+    
+    for i = 1:2:populationSize
+        i1 = TournamentSelect(fitness, pTournament, tournamentSize);
+        i2 = TournamentSelect(fitness, pTournament, tournamentSize);
+        chromosome1 = population(i1).Chromosome;
+        chromosome2 = population(i2).Chromosome;
+        
+        r = rand;
+        if r < crossoverProbability
+            [chromosome1, chromosome2] = TwoPointCross(chromosome1, chromosome2);
+        end
+        tempPopulation(i) = struct('Chromosome',chromosome1);
+        tempPopulation(i+1) = struct('Chromosome',chromosome2);
+    end
+    
+    for i = 1:populationSize
+        chromosome = population(i).Chromosome;
+        % The mutation probabilit should approach 1 as the number of
+        % generations since the last improvement approaches 100
+        mutationProbability = max(1, 1/length(chromosome) * exp(100 * log(length(chromosome))));
+        
+        mutatedChromosome = Mutate(chromosome, mutationProbability, numberOfRegisters, numberOfConstants);
+        tempPopulation(i) = struct('Chromosome', mutatedChromosome);
+    end
+    tempPopulation = InsertBestIndividual(tempPopulation, ...
+        population(bestIndividualIndex), elitismCopies);
+    population = tempPopulation; 
+    
+    fprintf('In generation %d, maximum fitness is %.4f \n', iGeneration, maximumFitness);
+end
+%%
+bestChromosome = population(bestIndividualIndex).Chromosome;
+expression = VisualiseChromosome(population(bestIndividualIndex).Chromosome, constants, numberOfRegisters, divisionByZeroResult);
+disp(expression);
+disp(simplify(expression));
+GetFitness(bestChromosome,constants,numberOfRegisters,divisionByZeroResult,maxLength)
