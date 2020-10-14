@@ -13,7 +13,7 @@ fitness = 1/error;
 chromosomeLength = length(chromosome);
 
 if chromosomeLength > maxLength
-    fitness = fitness / exp((chromosomeLength-maxLength)/200);
+    fitness = fitness / exp((chromosomeLength-maxLength)/100);
 end
     
 end
