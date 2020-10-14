@@ -1,4 +1,4 @@
-clear all; clc; close all
+clear all; clc; close all;
 INF = 1e100;
 populationSize = 100;
 numberOfGenes = 50;
