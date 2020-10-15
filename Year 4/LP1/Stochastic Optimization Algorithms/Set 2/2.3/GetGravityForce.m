@@ -1,4 +1,4 @@
-function gravityForce = GetGravityForce(alpha, M, g)
-gravityForce = M*g*sind(alpha);
+function gravityForce = GetGravityForce(alpha, m, g)
+gravityForce = m*g*sind(alpha);
 end
 

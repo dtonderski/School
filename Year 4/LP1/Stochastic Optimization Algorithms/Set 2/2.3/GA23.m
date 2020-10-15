@@ -1,4 +1,6 @@
-clear all; clc;
+%% Initialization
+clear all; clc; close all;
+%% Parameters
 INF = 1e50;
 populationSize = 100;
 numberOfHiddenNeurons = 8;
@@ -7,19 +9,18 @@ creepMutationProbability = 1/numberOfGenes;
 ordinaryMutationProbability = 1/numberOfGenes;
 crossoverProbability = 0.3; 
 elitismCopies = 1;
-numberOfGenerations = 10000;
+numberOfGenerations = 10;
 weightRange = 10;
 creepRate = weightRange/4;
 numberOfRuns = 1;
 slopeLength = 1000;
-
 pTournament = 0.9;
 tournamentSize = 2;
-
 
 bestRunValidationFitnessArray = zeros(numberOfRuns, 1);
 bestRunValidationChromosomeArray = zeros(numberOfRuns, numberOfGenes);
 
+%% Train numberOfRuns networks
 
 for iRun = 1:numberOfRuns
     fitness = zeros(populationSize,1);
@@ -37,12 +38,12 @@ for iRun = 1:numberOfRuns
         maximumValidationFitness = -INF;
         for i = 1:populationSize
             chromosome = population(i,:);
-            fitness(i) = GetTrainingFitness(chromosome, numberOfHiddenNeurons, slopeLength);
+            fitness(i) = GetFitness(chromosome, numberOfHiddenNeurons, slopeLength, 1);
             if fitness(i) > maximumFitness
                 maximumFitness = fitness(i);
                 bestIndividualIndex = i;
                 bestChromosome = chromosome;
-                validationFitness = GetValidationFitness(chromosome,numberOfHiddenNeurons, 2);
+                validationFitness = GetFitness(chromosome, numberOfHiddenNeurons, slopeLength, 2);
                 if validationFitness > maximumValidationFitness
                     maximumValidationFitness = validationFitness;
                     if validationFitness > bestRunValidationFitness
@@ -60,8 +61,6 @@ for iRun = 1:numberOfRuns
         for i = 1:2:populationSize
             i1 = TournamentSelect(fitness, pTournament, tournamentSize);
             i2 = TournamentSelect(fitness, pTournament, tournamentSize);
-            %i1 = RouletteSelect(fitness);
-            %i2 = RouletteSelect(fitness);
             chromosome1 = population(i1, :);
             chromosome2 = population(i2, :);
 
@@ -91,6 +90,8 @@ for iRun = 1:numberOfRuns
     hold on
     plot(validationFitnessArray);
     plot(fitnessArray);
+    xlabel('Generation')
+    ylabel('Fitness')
     bestRunValidationFitnessArray(iRun) = bestRunValidationFitness;
     bestRunValidationChromosomeArray(iRun, :) = bestRunValidationChromosome;
     
@@ -99,7 +100,8 @@ end
 %%
 for i = 1:iRun
     chromosome = bestRunValidationChromosomeArray(i, :);
-    sprintf('i = %d, 1 = %.4f, 2 = %.4f, 3 = %.4f', i, ...
-        GetValidationFitness(chromosome, numberOfHiddenNeurons, 1), GetValidationFitness(chromosome, numberOfHiddenNeurons, 2),...
-        GetValidationFitness(chromosome, numberOfHiddenNeurons, 3))
+    fprintf('Run number %d: training fitness = %.2f, validation fitness = %.2f, test fitness = %.2f.\n', i, ...
+        GetFitness(chromosome, numberOfHiddenNeurons, slopeLength, 1),...
+        GetFitness(chromosome, numberOfHiddenNeurons, slopeLength, 2),...
+        GetFitness(chromosome, numberOfHiddenNeurons, slopeLength, 3))
 end

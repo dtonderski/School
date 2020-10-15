@@ -1,10 +1,10 @@
-function position = InitializePositions(xmax, xmin, NParticles)
-nVariables = length(xmin);
-position = zeros(NParticles,nVariables);
+function position = InitializePositions(rangeMin, rangeMax, nParticles)
+nVariables = length(rangeMin);
+position = zeros(nParticles,nVariables);
 for jVariable = 1:nVariables
-    min = xmin(jVariable);
-    max = xmax(jVariable);
-    r = rand(1,NParticles);
+    min = rangeMin(jVariable);
+    max = rangeMax(jVariable);
+    r = rand(1,nParticles);
     position(:,jVariable) = min+r.*(max-min);
 end
 end

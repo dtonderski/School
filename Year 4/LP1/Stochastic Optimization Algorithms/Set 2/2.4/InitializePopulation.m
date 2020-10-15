@@ -1,8 +1,8 @@
-function population = InitializePopulation(populationSize,minChromosomeLength,maxChromosomeLength,numberOfRegisters,numberOfConstants)
+function population = InitializePopulation(populationSize,minStartChromosomeLength,maxStartChromosomeLength,numberOfRegisters,numberOfConstants)
 population = [];
 numberOfOperands = numberOfRegisters + numberOfConstants;
 for i = 1:populationSize
-     chromosomeLength = minChromosomeLength + fix(rand*(maxChromosomeLength-minChromosomeLength+1));
+     chromosomeLength = minStartChromosomeLength + fix(rand*(maxStartChromosomeLength-minStartChromosomeLength+1));
      chromosomeLength = chromosomeLength - mod(chromosomeLength, 4);
      
      tmpChromosome = zeros(chromosomeLength, 1);

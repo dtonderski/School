@@ -1,8 +1,8 @@
 function pathLength = GetNearestNeighbourPathLength(cityLocation)
-    N = size(cityLocation, 1);
+    numberOfCities = size(cityLocation, 1);
     pathLength = 0;
-    tabuList = randi([1 N]);
-    while length(tabuList)<N
+    tabuList = randi([1 numberOfCities]);
+    while length(tabuList)<numberOfCities
         nextCity = GetClosestCity(cityLocation, tabuList);
         pathLength = pathLength + GetDistance(cityLocation, tabuList(end), nextCity);
         tabuList = [tabuList, nextCity];

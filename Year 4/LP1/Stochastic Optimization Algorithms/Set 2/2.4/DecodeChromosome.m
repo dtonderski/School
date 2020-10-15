@@ -1,8 +1,7 @@
 function output = DecodeChromosome(input, chromosome, constants, numberOfRegisters, divisionByZeroResult)
 chromosomeLength = length(chromosome);
 
-registers = zeros(1, numberOfRegisters);
-registers(1) = input;
+registers = [input, zeros(1, numberOfRegisters-1)];
 operands = [registers, constants];
 
 for iGeneStart= 1:4:chromosomeLength

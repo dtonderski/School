@@ -25,7 +25,7 @@ rho = 0.5;          % DONE: set to appropriate value.
 nearestNeighbourPathLength = GetNearestNeighbourPathLength(cityLocation); 
 tau0 = numberOfAnts/nearestNeighbourPathLength;
 
-targetPathLength = 121.11;
+targetPathLength = 123;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialization
@@ -73,10 +73,5 @@ while (minimumPathLength > targetPathLength)
  pheromoneLevel = UpdatePheromoneLevels(pheromoneLevel,deltaPheromoneLevel,rho);          % DONE: write the UpdatePheromoneLevels function
 
 end
-
-
-
-
-
 
 

@@ -14,6 +14,7 @@ dt = 0.25;                  % s
 slopeLength = 1000;         % m
 
 % Initialization
+[w1, w2] = DecodeChromosome(chromosome,numberOfHiddenNeurons);
 x = 0;                      % m
 v = 20;                     % m/s
 gear = 7;       
@@ -28,7 +29,6 @@ while x < slopeLength
     t = t+dt;
     alpha = GetSlopeAngle(x, iSlope, iDataSet);
     deltaBrakeTemperature = brakeTemperature - ambientTemperature;
-    [w1, w2] = DecodeChromosome(chromosome,numberOfHiddenNeurons);
     input = [v/vMax; alpha/alphaMax; brakeTemperature/maxTemperature];
     [pedalPressure, DeltaGear] = GetNeuralNetworkOutput(input,w1,w2);
     if t-timeSinceGearChange>=2

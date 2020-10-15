@@ -1,5 +1,5 @@
 function distance = GetDistance(cityLocation, city1, city2)
-    start = cityLocation(city1,:);
-    stop = cityLocation(city2,:);
-    distance = norm(start-stop);
+    startLocation = cityLocation(city1,:);
+    endLocation = cityLocation(city2,:);
+    distance = norm(startLocation-endLocation);
 end

@@ -1,4 +1,4 @@
-function fitness = GetFitness(chromosome, constants, numberOfRegisters, divisionByZeroResult, maxLength)
+function fitness = GetFitness(chromosome, constants, numberOfRegisters, divisionByZeroResult, maxChromosomeLength)
 functionData = LoadFunctionData;
 numberOfDataPoints = size(functionData, 1);
 errorSum = 0;
@@ -12,8 +12,8 @@ error = sqrt(errorSum/numberOfDataPoints);
 fitness = 1/error;
 chromosomeLength = length(chromosome);
 
-if chromosomeLength > maxLength
-    fitness = fitness / exp((chromosomeLength-maxLength)/100);
+if chromosomeLength > maxChromosomeLength
+    fitness = fitness / exp((chromosomeLength-maxChromosomeLength)/100);
 end
     
 end
