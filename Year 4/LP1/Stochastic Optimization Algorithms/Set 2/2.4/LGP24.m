@@ -1,4 +1,6 @@
+%% Initialization
 clear all; close all; clc;
+%% Parameters
 INF = 1e100;
 populationSize = 100;
 minStartChromosomeLength = 24;
@@ -7,7 +9,7 @@ constants = [1,3,10];
 numberOfConstants = length(constants);
 numberOfRegisters = 4;
 divisionByZeroResult = 1e10;
-numberOfGenerations = 100;
+numberOfGenerations = 10000;
 pTournament = 0.75;
 tournamentSize = 5;
 crossoverProbability = 0.1;
@@ -15,13 +17,10 @@ elitismCopies = 1;
 maxChromosomeLength = 160;
 numberOfRuns = 1;
 mutationProbability = 0.04;
-%%
-bestEverChromosome = [1;2;3;1;3;2;1;3;1;2;3;1;4;1;6;1;4;1;6;1;1;2;3;1;1;2;3;1;3;3;6;2;1;1;2;5;1;1;2;5;3;2;1;3;1;1;2;5;1;1;2;5;1;1;2;5;4;1;6;1;3;2;1;3;1;2;3;1;1;2;3;1;1;1;2;5;4;1;6;1;1;2;3;1;4;1;6;1;4;1;6;1;3;2;1;3;1;1;2;5;4;1;6;1;4;1;6;1;3;2;1;3;1;2;3;1;4;1;6;1;1;2;3;1;3;3;6;2;1;1;2;5;4;1;6;1;3;2;1;3;1;2;3;1;1;2;3;1;1;2;3;1;1;2;3;1;1;2;3;1];
-
+%% Algorithm
 fitness = zeros(populationSize, 1);
 population = InitializePopulation(populationSize, minStartChromosomeLength,...
     maxStartChromosomeLength, numberOfRegisters, numberOfConstants);
-population(1) = struct('Chromosome', bestEverChromosome);
     
 for iGeneration = 1:numberOfGenerations
     maximumFitness = -INF;
@@ -64,4 +63,6 @@ for iGeneration = 1:numberOfGenerations
     fprintf('Generation %d, maximum fitness %.4f.\n',...
         iGeneration, maximumFitness);
 end
+
+%% Output
 fprintf('The total error for the best found chromosome is %.4f\n', 1/maximumFitness);

@@ -21,6 +21,6 @@ xlabel('x', 'interpreter','latex')
 ylabel('y', 'interpreter','latex')
 
 syms x
-eq = simplify(DecodeChromosome(x, bestChromosome, constants, numberOfRegisters, divisionByZeroResult));
+eq = GetFunctionEquation(bestChromosome, constants, numberOfRegisters, divisionByZeroResult);
 legend('Data','Estimate')
-fprintf('The estimated g(x) is %s with an error of %.4f.\n', eq, 1/GetFitness(bestChromosome,constants,numberOfRegisters,divisionByZeroResult, maxChromosomeLength));
+fprintf('The estimated g(x) = %s with an error of %.4f.\n', eq, 1/GetFitness(bestChromosome,constants,numberOfRegisters,divisionByZeroResult, maxChromosomeLength));
