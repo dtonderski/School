@@ -1,4 +1,6 @@
-clear all; clc;
+%% Initialization
+clear all; clc; close all;
+%% Parameters
 INF = 1e50;
 populationSize = 100;
 numberOfHiddenNeurons = 8;
@@ -10,16 +12,15 @@ elitismCopies = 1;
 numberOfGenerations = 500;
 weightRange = 10;
 creepRate = weightRange/4;
-numberOfRuns = 20;
+numberOfRuns = 10;
 slopeLength = 1000;
-
 pTournament = 0.9;
 tournamentSize = 2;
-
 
 bestRunValidationFitnessArray = zeros(numberOfRuns, 1);
 bestRunValidationChromosomeArray = zeros(numberOfRuns, numberOfGenes);
 
+%% Train numberOfRuns networks
 
 for iRun = 1:numberOfRuns
     fitness = zeros(populationSize,1);
@@ -99,7 +100,7 @@ end
 %%
 for i = 1:iRun
     chromosome = bestRunValidationChromosomeArray(i, :);
-    sprintf('i = %d, 1 = %.4f, 2 = %.4f, 3 = %.4f', i, ...
+    fprintf('For run number %d, training fitness = %.2f, validation fitness = %.2f, test fitness = %.2f.\n', i, ...
         GetValidationFitness(chromosome, numberOfHiddenNeurons, 1), GetValidationFitness(chromosome, numberOfHiddenNeurons, 2),...
         GetValidationFitness(chromosome, numberOfHiddenNeurons, 3))
 end
