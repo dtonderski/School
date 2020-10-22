@@ -4,7 +4,8 @@ clear; clc;
 initialQValue = 1;
 initial_epsilon = 1;
 alpha = 1;
-max_epochs = 10000;
+max_epochs = 30000;
+verbose = true;
 %% Training
 player1QTable = InitializeQTable;
 player2QTable = InitializeQTable;
@@ -18,6 +19,11 @@ results = zeros(1,max_epochs);
 for epoch = 1:max_epochs
     if mod(epoch, 100) == 0
         epsilon = epsilon/10;
+    end
+    if verbose
+        if mod(epoch,max_epochs/50) == 0
+            fprintf('Epoch %d: %d%% done.\n', epoch, round(epoch/max_epochs*100))
+        end
     end
     state = state0;
     visitedStateIndices = zeros(1,9);
@@ -42,138 +48,66 @@ end
 %%
 clf
 hold on
-for epoch = 100:10:max_epochs
-    results_window = results(epoch-99:epoch);
-    win_frequency = numel(find(results_window==1))/100;
-    plot(epoch, win_frequency, 'rx')
-    draw_frequency = numel(find(results_window == 0))/100;
-    plot(epoch, draw_frequency, 'bx')
-    lose_frequency = numel(find(results_window == -1))/100;
-    plot(epoch, lose_frequency, 'gx')
+windowHalfSize = 200;
+windowStep = 20;
+slidingWindow = [];
+win = [];
+draw = [];
+lose = [];
+for epoch = windowHalfSize:windowStep:max_epochs-windowHalfSize
+    results_window = results(epoch-windowHalfSize+1:epoch+windowHalfSize);
+    slidingWindow = [slidingWindow, epoch];
+    win = [win, numel(find(results_window==1))/(2*windowHalfSize)];
+    draw = [draw, numel(find(results_window == 0))/(2*windowHalfSize)];
+    lose = [lose, numel(find(results_window == -1))/(2*windowHalfSize)];
 end
+plot(slidingWindow, win, 'b')
+plot(slidingWindow, draw, 'r')
+plot(slidingWindow, lose, 'g')
 %% Functions
 
 function [player1QTable, player2QTable] = updateQTables(state, player1QTable, player2QTable, moveIndices, visitedStateIndices, numberOfTurns, alpha)
     [player1reward, player2reward] = GetReward(state);
     
-    % PLAYER 1 WINS
-    if player1reward == 1
-        % Player 1
-        t = numberOfTurns;
-        move = moveIndices(t);
+    % Player 1
+    player1LastTurn = numberOfTurns-mod(numberOfTurns+1,2);
+    t = player1LastTurn;
+    move = moveIndices(t);
+    visitedStateIndex = visitedStateIndices(t);
+    player1QTable(2, visitedStateIndex).entry(move) = ...
+        player1QTable(2, visitedStateIndex).entry(move) + alpha*(...
+            player1reward - player1QTable(2, visitedStateIndex).entry(move));
+    
+    for t = player1LastTurn-2:-2:1
         visitedStateIndex = visitedStateIndices(t);
-        player1QTable(2, visitedStateIndex).entry(move) = ...
-            player1QTable(2, visitedStateIndex).entry(move) + alpha;
-    
-        for t = numberOfTurns-2:-2:1
-            visitedStateIndex = visitedStateIndices(t);
-            nextVisitedStateIndex = visitedStateIndices(t+2);
-            move = moveIndices(t);
-    
-            player1QTable(2, visitedStateIndex).entry(move) = ...
-                player1QTable(2, visitedStateIndex).entry(move) + alpha*(...
-                    player1reward - ...
-                    player1QTable(2, visitedStateIndex).entry(move) + ...
-                    max(max(player1QTable(2, nextVisitedStateIndex).entry)));
-        end
-        
-        % Player 2
-        t = numberOfTurns - 1;
+        nextVisitedStateIndex = visitedStateIndices(t+2);
         move = moveIndices(t);
-        visitedStateIndex = visitedStateIndices(t);
-        player2QTable(2, visitedStateIndex).entry(move) = -1;
-    
-        for t = numberOfTurns-3:-2:2
-            visitedStateIndex = visitedStateIndices(t);
-            nextVisitedStateIndex = visitedStateIndices(t+2);
-            move = moveIndices(t);
-    
-            player2QTable(2, visitedStateIndex).entry(move) = ...
-                player2QTable(2, visitedStateIndex).entry(move) + alpha*(...
-                    player2reward - ...
-                    player2QTable(2, visitedStateIndex).entry(move) + ...
-                    max(max(player2QTable(2, nextVisitedStateIndex).entry)));
-        end
-    
-    % PLAYER 2 WINS
-    elseif player1reward == -1
-        % Player 1
-        t = numberOfTurns - 1;
-        move = moveIndices(t);
-        visitedStateIndex = visitedStateIndices(t);
-        player1QTable(2, visitedStateIndex).entry(move) = -1;
-    
-        for t = numberOfTurns-3:-2:1
-            visitedStateIndex = visitedStateIndices(t);
-            nextVisitedStateIndex = visitedStateIndices(t+2);
-            move = moveIndices(t);
-    
-            player1QTable(2, visitedStateIndex).entry(move) = ...
-                player1QTable(2, visitedStateIndex).entry(move) + alpha*(...
-                    player1reward - ...
-                    player1QTable(2, visitedStateIndex).entry(move) + ...
-                    max(max(player1QTable(2, nextVisitedStateIndex).entry)));
-        end
-    
-        % Player 2
-        t = numberOfTurns;
-        visitedStateIndex = visitedStateIndices(t);
-        move = moveIndices(t);
-        player2QTable(2, visitedStateIndex).entry(move) = ...
-            player2QTable(2, visitedStateIndex).entry(move) + alpha;
-    
-        for t = numberOfTurns-2:-2:2
-            visitedStateIndex = visitedStateIndices(t);
-            nextVisitedStateIndex = visitedStateIndices(t+2);
-            move = moveIndices(t);
-    
-            player2QTable(2, visitedStateIndex).entry(move) = ...
-                player2QTable(2, visitedStateIndex).entry(move) + alpha*(...
-                    player2reward - ...
-                    player2QTable(2, visitedStateIndex).entry(move) + ...
-                    max(max(player2QTable(2, nextVisitedStateIndex).entry)));
-        end
-    
-    % DRAW
-    else
-        % Player 1
-        t = numberOfTurns;
-        move = moveIndices(t);
-        visitedStateIndex = visitedStateIndices(t);
-        player1QTable(2, visitedStateIndex).entry(move) = ...
-            player1QTable(2, visitedStateIndex).entry(move) + alpha;
-    
-        for t = numberOfTurns-2:-2:1
-            visitedStateIndex = visitedStateIndices(t);
-            nextVisitedStateIndex = visitedStateIndices(t+2);
-            move = moveIndices(t);
-    
-            player1QTable(2, visitedStateIndex).entry(move) = ...
-                player1QTable(2, visitedStateIndex).entry(move) + alpha*(...
-                    player1reward - ...
-                    player1QTable(2, visitedStateIndex).entry(move) + ...
-                    max(max(player1QTable(2, nextVisitedStateIndex).entry)));
-        end
-    
-        % Player 2
-        t = numberOfTurns - 1;
-        move = moveIndices(t);
-        visitedStateIndex = visitedStateIndices(t);
-        player2QTable(2, visitedStateIndex).entry(move) = -1;
-    
-        for t = numberOfTurns-3:-2:2
-            visitedStateIndex = visitedStateIndices(t);
-            nextVisitedStateIndex = visitedStateIndices(t+2);
-            move = moveIndices(t);
-    
-            player2QTable(2, visitedStateIndex).entry(move) = ...
-                player2QTable(2, visitedStateIndex).entry(move) + alpha*(...
-                    player2reward - ...
-                    player2QTable(2, visitedStateIndex).entry(move) + ...
-                    max(max(player2QTable(2, nextVisitedStateIndex).entry)));
-        end
-    end
 
+        player1QTable(2, visitedStateIndex).entry(move) = ...
+            player1QTable(2, visitedStateIndex).entry(move) + alpha*(...
+                -player1QTable(2, visitedStateIndex).entry(move) + ...
+                max(max(player1QTable(2, nextVisitedStateIndex).entry)));
+    end
+    
+    % Player 2
+    player2LastTurn = numberOfTurns-mod(numberOfTurns,2);
+    t = player2LastTurn;
+    move = moveIndices(t);
+    visitedStateIndex = visitedStateIndices(t);
+    player2QTable(2, visitedStateIndex).entry(move) = ...
+        player2QTable(2, visitedStateIndex).entry(move) + alpha*(...
+            player2reward - player2QTable(2, visitedStateIndex).entry(move));
+    
+    for t = player2LastTurn-2:-2:2
+        visitedStateIndex = visitedStateIndices(t);
+        nextVisitedStateIndex = visitedStateIndices(t+2);
+        move = moveIndices(t);
+
+        player2QTable(2, visitedStateIndex).entry(move) = ...
+            player2QTable(2, visitedStateIndex).entry(move) + alpha*(...
+                -player2QTable(2, visitedStateIndex).entry(move) + ...
+                max(max(player2QTable(2, nextVisitedStateIndex).entry)));
+    end
 end
 
 function [player1reward, player2reward] = GetReward(state)
