@@ -1,5 +1,6 @@
 %% Initialization
 clear; clc;
+loadNetworks = true;
 %% Load and convert data to the desired format
 [xTrain, tTrain, xValid, tValid, xTest, tTest] = LoadMNIST(3);
 imageSize = [28 28 1];
@@ -31,8 +32,9 @@ options1 = trainingOptions('sgdm', ...
     'ValidationData', {xValid, tValid}, ...
     'Plots','training-progress');
 
-
-[net1, trainingInfo1] = trainNetwork(xTrain, tTrain, layers1, options1); 
+if ~loadNetworks
+    [net1, trainingInfo1] = trainNetwork(xTrain, tTrain, layers1, options1);
+end
 %% Network 2
 layers2 = [
     imageInputLayer(imageSize)
@@ -66,23 +68,31 @@ options2 = trainingOptions('sgdm', ...
     'Shuffle', 'every-epoch', ...
     'ValidationData', {xValid, tValid}, ...
     'Plots','training-progress');
-
-[net2, trainingInfo2] = trainNetwork(xTrain, tTrain, layers2, options2); 
+if ~loadNetworks
+    [net2, trainingInfo2] = trainNetwork(xTrain, tTrain, layers2, options2); 
+end
 %% Save networks
-save('Homework3_1_networks.mat', 'net1', 'trainingInfo1', 'net2', 'trainingInfo2')
+if ~loadNetworks
+    save('Homework3_1_networks.mat', 'net1', 'trainingInfo1', 'net2', 'trainingInfo2')
+end
+
+%% Load networks
+if loadNetworks
+    load('Homework3_1_networks.mat')
+end
 
 %% Test network 1
 trainAccuracy1 = trainingInfo1.TrainingAccuracy(end);
 validAccuracy1 = trainingInfo1.ValidationAccuracy(end);
-testAccuracy1 = GetTestAccuracy(net1, xTest, tTest);
+testAccuracy1 = GetTestAccuracy(net1, xTest, tTest)*100;
 
 fprintf('Network 1 results: training accuracy = %.4f, validation accuracy = %.4f, and test accuracy = %.4f.\n', ...
     trainAccuracy1, validAccuracy1, testAccuracy1);
 
 %% Test network 2
-trainAccuracy2 = trainingInfo1.TrainingAccuracy(end);
-validAccuracy2 = trainingInfo1.ValidationAccuracy(end);
-testAccuracy2 = GetTestAccuracy(net2, xTest, tTest);
+trainAccuracy2 = trainingInfo2.TrainingAccuracy(end);
+validAccuracy2 = trainingInfo2.ValidationAccuracy(end);
+testAccuracy2 = GetTestAccuracy(net2, xTest, tTest)*100;
 
 fprintf('Network 2 results: training accuracy = %.4f, validation accuracy = %.4f, and test accuracy = %.4f.\n', ...
     trainAccuracy2, validAccuracy2, testAccuracy2);

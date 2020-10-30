@@ -94,3 +94,33 @@ set(gca,'FontSize',15)
 
 
 
+%%
+minI = 10^308;
+maxI = Inf;
+iStep = minI/10;
+
+while iStep > 1
+    if minI ~= Inf
+        minIBackup = minI;
+    else
+        break
+    end
+    for iStepFactor = 1:log10(minI)
+        iStep = minI*10^(-iStepFactor);
+        if minI + iStep ~= Inf
+            disp(iStep)
+            break
+        end
+    end
+    disp(minI)
+    for i = minI:iStep:maxI
+        if i == Inf
+            break
+        end
+        if i+iStep == Inf
+            minI = i;
+            break
+        end
+    end
+end
+    

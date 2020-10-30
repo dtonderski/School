@@ -15,8 +15,9 @@ patterns = [[-1;-1;-1;-1;-1;-1;-1;-1;-1], ...
             [ 1; 1; 1; 1; 1; 1;-1;-1;-1], ...
             [-1;-1;-1; 1; 1; 1; 1; 1; 1], ...
             [ 1; 1; 1;-1;-1;-1; 1; 1; 1]];
-        
+
 possiblePatterns = zeros(9,512);
+
 for i = 1:512
     possiblePatterns(:,i) = DecimalToState(i);
 end
@@ -26,34 +27,43 @@ for i = 1:14
     patternsDecimal(i) = StateToDecimal(patterns(:,i));
 end
 %% Parameters
-M = 16; % Hidden Neurons
-N = 9;  % Input
+M                           =   16; % Hidden Neurons
+N                           =   9;  % Input
 weightMatrix                =   -1+2*rand(M,N);
 thetaV                      =   -1+2*rand(1,N);
 thetaH                      =   -1+2*rand(M,1);
-max_epochs                  =   1000;
+max_epochs                  =   3000;
 p                           =   14;
 beta                        =   1;
 iterationLength             =   100;
 eta                         =   0.01;
 divergenceArray             =   zeros(1, max_epochs);
 repeatsPerPattern           =   2;
-verboseGlobal               =   0;
+verbose                     =   1;
+frequencySum                =   1400;
+PData                       =   1/14;
+repeatsPerPattern           =   2;
+iterationLength             =   5;
+
 %% Training
 for iEpoch = 1:max_epochs
-    disp(iEpoch)
-    verbose = 0;
+    frequency = zeros(512, 1);
     if(verbose && mod(iEpoch, 100) == 0)
-        fprintf('Epoch is %d.', epoch);
+        fprintf('Epoch is %d, %d percent done.\n', iEpoch, round(iEpoch/max_epochs*100));
     end
     deltaWeight = zeros([size(weightMatrix), 14]);
     deltaThetaV = zeros([size(thetaV), 14]);
     deltaThetaH = zeros([size(thetaH), 14]);
     for mu = 1:14
         pattern = patterns(:,mu);
+        correctDecimal = StateToDecimal(pattern);
         v = pattern;
         for t = 1:iterationLength
             v = RunIteration(v, weightMatrix, beta, thetaV, thetaH);
+            decimalRepresentation = StateToDecimal(v);
+            if decimalRepresentation == correctDecimal
+                frequency(decimalRepresentation) = frequency(decimalRepresentation) + 1;
+            end
         end
         deltaWeight(:,:,mu)  =  eta*(tanh(weightMatrix*pattern - thetaH)*pattern' - tanh(weightMatrix*v - thetaH)*v');
         deltaThetaV (:,:,mu) = -eta*(pattern - v);
@@ -64,7 +74,7 @@ for iEpoch = 1:max_epochs
     thetaH       = thetaH +       sum(deltaThetaH,3);
 
     divergenceArray(iEpoch) = GetKullbackLeiblerDivergence(weightMatrix, ...
-        repeatsPerPattern, possiblePatterns, ...
+        repeatsPerPattern, iterationLength, possiblePatterns, ...
         patternsDecimal, beta, thetaV, thetaH);
 end
 
@@ -73,7 +83,6 @@ clf
 figure(1)
 plot(divergenceArray);
 
-%%
 figure(2)
 clf
 middleAndRightColumnIndices = [2 3 5 6 8 9];
@@ -87,22 +96,31 @@ for iPattern = 0:13
         v = RunIteration(v, weightMatrix, beta, thetaV, thetaH);
     end
 end
+%%
+figure(3)
+v = patterns(:,14);
+v(middleAndRightColumnIndices) = 0;
+for iteration = 1:10
+    subplot(1,10,iteration);
+    PlotPattern(v);
+    v = RunIteration(v, weightMatrix, beta, thetaV, thetaH);
+end
 %% Functions
 function divergence = GetKullbackLeiblerDivergence(weightMatrix, ...
-    repeatsPerPattern, possiblePatterns, ...
+    repeatsPerPattern, iterationLength, possiblePatterns, ...
     patternsDecimal, beta, thetaV, thetaH)
     
     frequency = zeros(512, 1);
     for t = 1:512*repeatsPerPattern
         v = possiblePatterns(:,ceil(t/repeatsPerPattern));
-        for i = 1:10
+        for i = 1:iterationLength
             v = RunIteration(v, weightMatrix, beta, thetaV, thetaH);
+            decimalRepresentation = StateToDecimal(v);
+            frequency(decimalRepresentation) = frequency(decimalRepresentation) + 1;
         end
-        decimalRepresentation = StateToDecimal(v);
-        frequency(decimalRepresentation) = frequency(decimalRepresentation) + 1;
     end
 
-    frequencySum = 512*repeatsPerPattern;
+    frequencySum = 512*repeatsPerPattern*iterationLength;
     PB = frequency/frequencySum;
     PData = 1/14;
     divergence = 0;

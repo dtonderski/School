@@ -4,7 +4,7 @@ clear; clc;
 initialQValue = 1;
 initial_epsilon = 1;
 alpha = 1;
-max_epochs = 30000;
+max_epochs = 100000;
 verbose = true;
 %% Training
 player1QTable = InitializeQTable;
@@ -17,7 +17,7 @@ epsilon = initial_epsilon;
 %%
 results = zeros(1,max_epochs);
 for epoch = 1:max_epochs
-    if mod(epoch, 100) == 0
+    if mod(epoch, 10000) == 0
         epsilon = epsilon/10;
     end
     if verbose
@@ -48,22 +48,27 @@ end
 %%
 clf
 hold on
-windowHalfSize = 200;
+windowSize = 1000;
 windowStep = 20;
 slidingWindow = [];
 win = [];
 draw = [];
 lose = [];
-for epoch = windowHalfSize:windowStep:max_epochs-windowHalfSize
-    results_window = results(epoch-windowHalfSize+1:epoch+windowHalfSize);
+for epoch = windowSize:windowStep:max_epochs
+    results_window = results(epoch-windowSize+1:epoch);
     slidingWindow = [slidingWindow, epoch];
-    win = [win, numel(find(results_window==1))/(2*windowHalfSize)];
-    draw = [draw, numel(find(results_window == 0))/(2*windowHalfSize)];
-    lose = [lose, numel(find(results_window == -1))/(2*windowHalfSize)];
+    win = [win, numel(find(results_window==1))/(windowSize)];
+    draw = [draw, numel(find(results_window == 0))/(windowSize)];
+    lose = [lose, numel(find(results_window == -1))/(windowSize)];
 end
 plot(slidingWindow, win, 'b')
 plot(slidingWindow, draw, 'r')
 plot(slidingWindow, lose, 'g')
+
+%% Save Q Tables
+saveQTable(player1QTable, 'player1.csv');
+saveQTable(player2QTable, 'player2.csv');
+
 %% Functions
 
 function [player1QTable, player2QTable] = updateQTables(state, player1QTable, player2QTable, moveIndices, visitedStateIndices, numberOfTurns, alpha)
@@ -121,9 +126,9 @@ function [player1reward, player2reward] = GetReward(state)
         end
     end        
     i = [1,2,3];
-    if all(diag(state) == 1) || all(flip(diag(state)) == 1)
+    if all(diag(state) == 1) || all(diag(flip(state)) == 1)
         player1reward = 1; player2reward = -1;
-    elseif all(diag(state) == -1) || all(flip(diag(state) == -1))
+    elseif all(diag(state) == -1) || all(diag(flip(state) == -1))
         player1reward = -1; player2reward = 1;
     else
         player1reward = 0; player2reward = 0;
@@ -193,4 +198,26 @@ function testStateToNumber()
         state = reshape([zeros(1, 9-length(stringArray)), stringArray],3,3)-1;
         assert(stateToNumber(state) == i+1);
     end
+end
+
+function newQTable = saveQTable(qTable, filename)
+    newQTable = cell(2, 19683);
+    j = 1;
+    for i = 1:19683
+        state   = qTable(1, i).entry;
+        qValues = qTable(2, i).entry;
+        if ~isempty(state)
+            newQTable(1,j) = {state};
+            newQTable(2,j) = {qValues};
+            j = j+1;
+        end
+    end
+    newQTable(:, j:end) = [];
+    newQTable2 = zeros(size(newQTable)*3);
+    for j = 1:size(newQTable,2)
+        for i = 1:2
+            newQTable2(i*3-2:i*3,j*3-2:j*3) = cell2mat(newQTable(i,j));
+        end
+    end
+    writematrix(newQTable2, filename);
 end
