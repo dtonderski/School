@@ -1,5 +1,6 @@
+%% Restricted Boltzmann machine
 %% Initialization
-clear;
+clear; close all
 %% Patterns
 patterns = [[-1;-1;-1;-1;-1;-1;-1;-1;-1], ...
             [ 1;-1;-1; 1;-1;-1; 1;-1;-1], ...
@@ -27,84 +28,74 @@ for i = 1:14
     patternsDecimal(i) = StateToDecimal(patterns(:,i));
 end
 %% Parameters
-M                           =   16; % Hidden Neurons
-N                           =   9;  % Input
-weightMatrix                =   -1+2*rand(M,N);
-thetaV                      =   -1+2*rand(1,N);
-thetaH                      =   -1+2*rand(M,1);
-max_epochs                  =   3000;
+MArray                      =   [2 4 8 16];            % Hidden Neurons
+N                           =   9;              % Input
+max_epochs                  =   1000;
 p                           =   14;
 beta                        =   1;
 iterationLength             =   100;
 eta                         =   0.01;
-divergenceArray             =   zeros(1, max_epochs);
-repeatsPerPattern           =   2;
 verbose                     =   1;
 frequencySum                =   1400;
 PData                       =   1/14;
-repeatsPerPattern           =   2;
-iterationLength             =   5;
+repeatsPerPattern           =   1;
+divergenceIterationLength   =   100;
 
-%% Training
-for iEpoch = 1:max_epochs
-    frequency = zeros(512, 1);
-    if(verbose && mod(iEpoch, 100) == 0)
-        fprintf('Epoch is %d, %d percent done.\n', iEpoch, round(iEpoch/max_epochs*100));
-    end
-    deltaWeight = zeros([size(weightMatrix), 14]);
-    deltaThetaV = zeros([size(thetaV), 14]);
-    deltaThetaH = zeros([size(thetaH), 14]);
-    for mu = 1:14
-        pattern = patterns(:,mu);
-        correctDecimal = StateToDecimal(pattern);
-        v = pattern;
-        for t = 1:iterationLength
-            v = RunIteration(v, weightMatrix, beta, thetaV, thetaH);
-            decimalRepresentation = StateToDecimal(v);
-            if decimalRepresentation == correctDecimal
-                frequency(decimalRepresentation) = frequency(decimalRepresentation) + 1;
-            end
+%% Training and plotting
+iFigure = 1;
+for M = MArray
+    weightMatrix                =   -1+2*rand(M,N);
+    thetaV                      =   -1+2*rand(1,N);
+    thetaH                      =   -1+2*rand(M,1);
+    divergenceArray             =   zeros(1, max_epochs);
+    for iEpoch = 1:max_epochs
+        frequency = zeros(512, 1);
+        if(verbose && mod(iEpoch, max_epochs/10) == 0)
+            fprintf('M is %d, Epoch is %d, %d percent done.\n', M, iEpoch, round(iEpoch/max_epochs*100));
         end
-        deltaWeight(:,:,mu)  =  eta*(tanh(weightMatrix*pattern - thetaH)*pattern' - tanh(weightMatrix*v - thetaH)*v');
-        deltaThetaV (:,:,mu) = -eta*(pattern - v);
-        deltaThetaH (:,:,mu) = -eta*(tanh(weightMatrix*pattern - thetaH) - tanh(weightMatrix*v - thetaH));
+        deltaWeight = zeros([size(weightMatrix), 14]);
+        deltaThetaV = zeros([size(thetaV), 14]);
+        deltaThetaH = zeros([size(thetaH), 14]);
+        for mu = 1:14
+            pattern = patterns(:,mu);
+            correctDecimal = StateToDecimal(pattern);
+            v = pattern;
+            for t = 1:iterationLength
+                v = RunIteration(v, weightMatrix, beta, thetaV, thetaH);
+            end
+            deltaWeight(:,:,mu)  =  eta*(tanh(weightMatrix*pattern - thetaH)*pattern' - tanh(weightMatrix*v - thetaH)*v');
+            deltaThetaV (:,:,mu) = -eta*(pattern - v);
+            deltaThetaH (:,:,mu) = -eta*(tanh(weightMatrix*pattern - thetaH) - tanh(weightMatrix*v - thetaH));
+        end
+        weightMatrix = weightMatrix + sum(deltaWeight,3);
+        thetaV       = thetaV +       sum(deltaThetaV,3);
+        thetaH       = thetaH +       sum(deltaThetaH,3);
+
+        divergenceArray(iEpoch) = GetKullbackLeiblerDivergence(weightMatrix, ...
+            repeatsPerPattern, divergenceIterationLength, possiblePatterns, ...
+            patternsDecimal, beta, thetaV, thetaH);
     end
-    weightMatrix = weightMatrix + sum(deltaWeight,3);
-    thetaV       = thetaV +       sum(deltaThetaV,3);
-    thetaH       = thetaH +       sum(deltaThetaH,3);
-
-    divergenceArray(iEpoch) = GetKullbackLeiblerDivergence(weightMatrix, ...
-        repeatsPerPattern, iterationLength, possiblePatterns, ...
-        patternsDecimal, beta, thetaV, thetaH);
-end
-
-%% Plotting
-clf
-figure(1)
-plot(divergenceArray);
-
-figure(2)
-clf
-middleAndRightColumnIndices = [2 3 5 6 8 9];
-
-for iPattern = 0:13
-    v = patterns(:,iPattern+1);
+    
+    figure(iFigure)
+    clf
+    plot(divergenceArray);
+    xlabel('Epoch number')
+    ylabel('Divergence')
+    iFigure = iFigure + 1;
+    
+    figure(iFigure)
+    clf
+    middleAndRightColumnIndices = [2,3,5,6,8,9];
+    v = patterns(:,14);
     v(middleAndRightColumnIndices) = 0;
     for iteration = 1:10
-        subplot(14,10,iPattern*10+iteration);
+        subplot(1,10,iteration);
         PlotPattern(v);
         v = RunIteration(v, weightMatrix, beta, thetaV, thetaH);
     end
+    iFigure = iFigure + 1;
 end
-%%
-figure(3)
-v = patterns(:,14);
-v(middleAndRightColumnIndices) = 0;
-for iteration = 1:10
-    subplot(1,10,iteration);
-    PlotPattern(v);
-    v = RunIteration(v, weightMatrix, beta, thetaV, thetaH);
-end
+
 %% Functions
 function divergence = GetKullbackLeiblerDivergence(weightMatrix, ...
     repeatsPerPattern, iterationLength, possiblePatterns, ...
@@ -113,10 +104,11 @@ function divergence = GetKullbackLeiblerDivergence(weightMatrix, ...
     frequency = zeros(512, 1);
     for t = 1:512*repeatsPerPattern
         v = possiblePatterns(:,ceil(t/repeatsPerPattern));
+
         for i = 1:iterationLength
             v = RunIteration(v, weightMatrix, beta, thetaV, thetaH);
             decimalRepresentation = StateToDecimal(v);
-            frequency(decimalRepresentation) = frequency(decimalRepresentation) + 1;
+            frequency(decimalRepresentation) = frequency(decimalRepresentation) + 1; 
         end
     end
 
