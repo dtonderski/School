@@ -1,3 +1,4 @@
+%% Fully connected Autoencoder
 %% Initialization
 clear; clc;
 loadNetworks = true;

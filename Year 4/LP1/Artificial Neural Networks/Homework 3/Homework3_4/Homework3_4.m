@@ -1,21 +1,23 @@
+%% Tic tac toe
 %% Initialization
 clear; clc;
+
 %% Parameters
 initialQValue = 1;
 initial_epsilon = 1;
 alpha = 1;
-max_epochs = 100000;
+max_epochs = 1e5;
 verbose = true;
-%% Training
+state0 = zeros(3);
 player1QTable = InitializeQTable;
 player2QTable = InitializeQTable;
 
-state0 = zeros(3);
-
-
 epsilon = initial_epsilon;
-%%
 results = zeros(1,max_epochs);
+
+
+
+%% Training
 for epoch = 1:max_epochs
     if mod(epoch, 10000) == 0
         epsilon = epsilon/10;
@@ -45,7 +47,8 @@ for epoch = 1:max_epochs
     results(epoch) = GetReward(state);
     [player1QTable, player2QTable] = updateQTables(state, player1QTable, player2QTable, moveIndices, visitedStateIndices, numberOfTurns, alpha);
 end
-%%
+%% Plotting
+figure(1)
 clf
 hold on
 windowSize = 1000;
@@ -64,13 +67,15 @@ end
 plot(slidingWindow, win, 'b')
 plot(slidingWindow, draw, 'r')
 plot(slidingWindow, lose, 'g')
+xlabel('Number of iterations')
+legend('Player 1 win', 'Draw', 'Player 2 win')
+ylabel('Results fraction')
 
 %% Save Q Tables
 saveQTable(player1QTable, 'player1.csv');
 saveQTable(player2QTable, 'player2.csv');
 
 %% Functions
-
 function [player1QTable, player2QTable] = updateQTables(state, player1QTable, player2QTable, moveIndices, visitedStateIndices, numberOfTurns, alpha)
     [player1reward, player2reward] = GetReward(state);
     

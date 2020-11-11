@@ -1,3 +1,4 @@
+%% Convolutional networks
 %% Initialization
 clear; clc;
 loadNetworks = true;
