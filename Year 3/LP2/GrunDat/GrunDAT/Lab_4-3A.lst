@@ -1,0 +1,25 @@
+QAflisp - FLISP Absolute crossassembler, Version 1.0
+(c) GMV 1989-2015
+
+
+File: Lab_4-3A.lst
+FB                      1. Bargraph: 	EQU 	$FB
+                        2. 
+20                      3. 		ORG	$20
+                        4. 
+05                      5. State_1: 	EQU 	$05
+06                      6. State_2: 	EQU 	$06
+0A                      7. State_3: 	EQU 	$0A
+09                      8. State_4: 	EQU 	$09
+                        9. 
+20 F0 05               10. Rotate:		LDA	#State_1
+22 E1 FB               11. 		STA	Bargraph
+24 F0 06               12. 		LDA	#State_2
+26 E1 FB               13. 		STA	Bargraph
+28 F0 0A               14. 		LDA	#State_3
+2A E1 FB               15. 		STA	Bargraph
+2C F0 09               16. 		LDA	#State_4
+2E E1 FB               17. 		STA	Bargraph
+                       18. 
+30 33 20               19. 		JMP	Rotate
+                       20. 

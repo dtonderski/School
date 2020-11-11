@@ -1,0 +1,12 @@
+QAflisp - FLISP Absolute crossassembler, Version 1.0
+(c) GMV 1989-2015
+File: Moment1.fmem
+
+ # ClearAllMemory
+ # ClearAllRegisters
+ #setMemory  20=F1
+ #setMemory  21=FC
+ #setMemory  22=E1
+ #setMemory  23=FB
+ #setMemory  24=33
+ #setMemory  25=20

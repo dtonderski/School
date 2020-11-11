@@ -1,0 +1,12 @@
+QAflisp - FLISP Absolute crossassembler, Version 1.0
+(c) GMV 1989-2015
+
+
+File: Moment1.lst
+                        1. ;
+                        2. ;	Moment1.sflisp
+                        3. ;
+20                      4. 	ORG	$20
+20 F1 FC                5. start:	LDA	$FC
+22 E1 FB                6. 	STA	$FB
+24 33 20                7. 	JMP	start

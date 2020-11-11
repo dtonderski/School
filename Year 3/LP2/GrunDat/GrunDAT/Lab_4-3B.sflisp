@@ -1,0 +1,37 @@
+INPORT: 	EQU		$FC
+OUTPORT:	EQU		$FB
+INDEX:		EQU		$FE	
+
+		ORG		$20
+
+Start:		CLRA
+		STA		INDEX
+		LDX		#STATE_VECTOR
+
+Main:		LDA		INPORT
+		JSR		Delay
+		
+		LDA		INDEX
+		LDA		A,X
+		STA		OUTPORT
+	
+		JSR		NEXT_STATE
+		JMP 		Main
+
+
+Delay:		DECA
+		TSTA
+		BNE		Delay
+		RTS
+		
+
+NEXT_STATE:	LDA		INDEX
+		INCA
+		ANDA		#$03
+		STA		INDEX
+		RTS
+		
+
+		ORG		$70
+
+STATE_VECTOR:	FCB		$05,$06,$0A,$09

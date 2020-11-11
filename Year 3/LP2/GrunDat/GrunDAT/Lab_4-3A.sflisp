@@ -1,0 +1,20 @@
+Bargraph: 	EQU 	$FB
+
+		ORG	$20
+
+State_1: 	EQU 	$05
+State_2: 	EQU 	$06
+State_3: 	EQU 	$0A
+State_4: 	EQU 	$09
+
+Rotate:		LDA	#State_1
+		STA	Bargraph
+		LDA	#State_2
+		STA	Bargraph
+		LDA	#State_3
+		STA	Bargraph
+		LDA	#State_4
+		STA	Bargraph
+
+		JMP	Rotate
+

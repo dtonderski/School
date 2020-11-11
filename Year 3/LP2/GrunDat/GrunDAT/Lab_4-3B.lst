@@ -1,0 +1,28 @@
+QAflisp - FLISP Absolute crossassembler, Version 1.0
+(c) GMV 1989-2015
+
+
+File: Lab_4-3B.lst
+FB                      1. Bargraph: 	EQU 	$FB
+                        2. 
+00 05 06 0A 09          3. STATE_VECTOR:	FCB	$05,$06,$0A,$09
+00                      4. STATE_INDEX:	EQU	$00
+                        5. 
+20                      6. 		ORG	$20
+20                      7. 		
+20 90 00                8. TEST:		LDX	#STATE_VECTOR
+22 F0 FF                9. 		LDA	#$FF
+24 E1 FB               10. 		STA	Bargraph
+26 08                  11. 		DECA
+27 33 20               12. 		JMP	TEST
+                       13. 
+                       14. 
+                       15. 
+                       16. 
+                       17. 
+                       18. 
+                       19. 
+                       20. 
+                       21. 
+                       22. 
+                       23. 

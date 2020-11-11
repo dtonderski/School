@@ -1,0 +1,8 @@
+		org	$20
+DIPSWITCH:	equ	$FC
+LED:		equ	$FB
+
+start: 		lda 	DIPSWITCH
+		coma
+		STA	LED
+		JMP	start
