@@ -205,7 +205,7 @@ function testStateToNumber()
     end
 end
 
-function newQTable = saveQTable(qTable, filename)
+function saveQTable(qTable, filename)
     newQTable = cell(2, 19683);
     j = 1;
     for i = 1:19683

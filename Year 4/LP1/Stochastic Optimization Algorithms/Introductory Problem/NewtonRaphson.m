@@ -15,6 +15,7 @@ function iterates = NewtonRaphson(coefficients, startingPoint, tolerance)
     
     newValue = NewtonRaphsonStep(oldValue, firstDerivative, secondDerivative);
     iterates = [oldValue newValue];
+    fprintf('x is %.5f, firstDerivative is %.5f, secondDerivative is %.5f\n', newValue, firstDerivative, secondDerivative);
 
         
     
@@ -33,6 +34,8 @@ function iterates = NewtonRaphson(coefficients, startingPoint, tolerance)
         end
         newValue = NewtonRaphsonStep(oldValue, firstDerivative, secondDerivative);
         iterates = [iterates, newValue];
+        fprintf('x is %.5f, firstDerivative is %.5f, secondDerivative is %.5f\n', newValue, firstDerivative, secondDerivative);
+
     end    
   
 
