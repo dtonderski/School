@@ -7,10 +7,12 @@ nAgents = 1000;
 diffusionRate = 1;
 infectedProportion = 0.01;
 numberOfRuns = 10;
+maxRatio = 100;
+numberOfPoints = 30;
 
 %%
 beta1 = 0.9;
-gammaRange1 = beta1./linspace(0,100,30);
+gammaRange1 = beta1./linspace(0,maxRatio,numberOfPoints);
 recoveredProportion1 = zeros(size(gammaRange1));
 
 for iGamma = 1:length(gammaRange1)
@@ -32,7 +34,7 @@ for iGamma = 1:length(gammaRange1)
 end
 %%
 beta2 = 0.1;
-gammaRange2 = beta2./linspace(0,100, 30);
+gammaRange2 = beta2./linspace(0,maxRatio, numberOfPoints);
 recoveredProportion2 = zeros(size(gammaRange2));
 
 for iGamma = 1:length(gammaRange2)
@@ -55,11 +57,14 @@ for iGamma = 1:length(gammaRange2)
 end
 %%
 clf
+clear
+load('3.mat')
 plot(beta1./gammaRange1, recoveredProportion1)
 hold on
 plot(beta2./gammaRange2, recoveredProportion2)
-legend('$\beta = 0.9$', '$\beta = 0.1$', 'Interpreter', 'latex')
-
-
+legend('$\beta = 0.9$', '$\beta = 0.1$', 'Interpreter', 'latex');
+xlabel('$k = \beta/\gamma$', 'Interpreter', 'latex');
+ylabel('$R_\infty$', 'Interpreter', 'latex');
+title('d = 1, 10 runs per point', 'Interpreter', 'latex');
 
 
