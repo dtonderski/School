@@ -3,17 +3,25 @@ dxdtParticles   = vParticles.*cos(phiParticles) +   sqrt(2*diffusionTrans)*normr
 dydtParticles   = vParticles.*sin(phiParticles) +   sqrt(2*diffusionTrans)*normrnd(0,1,size(yParticles  ));
 dphidtParticles =                                   sqrt(2*diffusionRot  )*normrnd(0,1,size(phiParticles));
 
-%disp(sqrt(2*diffusionRot)*normrnd(0,1)*dt)
-
 torqueActive = GetTorqueActive(xParticles, yParticles, phiParticles, torqueConstant);
-%disp(max(max(torqueActive)))
 dphidtParticles = dphidtParticles + torqueActive;
-
 
 
 torquePassive = GetTorquePassive(xParticles, yParticles, xStatic, yStatic, phiParticles, torqueConstant);
 dphidtParticles = dphidtParticles - torquePassive;
 
+
+% disp('DiffusionTrans')
+% disp(sqrt(2*diffusionTrans)*normrnd(0,1)*dt)
+% 
+% disp('DiffusionRot')
+% disp(sqrt(2*diffusionRot)*normrnd(0,1)*dt)
+% 
+% disp('Active')
+% disp(max(max(torqueActive)))
+%
+% disp('Passive')
+% disp(max(max(torquePassive)))
 
 xParticles      = xParticles    + dxdtParticles*    dt;
 yParticles      = yParticles    + dydtParticles*    dt;
