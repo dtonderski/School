@@ -1,4 +1,4 @@
-function PlotTrajectories3(xTrajectories,yTrajectories, nParticles, xStatic, yStatic, radius, timeStep, xRange, yRange, showTrajectory, showPassive)
+function PlotTrajectories3(xTrajectories,yTrajectories, nParticles, xStatic, yStatic, nStatic, radius, timeStep, xRange, yRange, showTrajectory, showPassive)
 hold on
 
 viscircles([xTrajectories(timeStep, :)', yTrajectories(timeStep, :)'], ones(nParticles,1)*radius, 'Color', [255 64 64]/255);
