@@ -23,6 +23,7 @@ f = figure(1);
 nFrames = timeSteps*dt*FPS;
 F(nFrames) = getframe(gcf);
 tic
+
 for t = 1:timeSteps
     if mod(t, timeSteps/100) == 0
         fprintf('%d %% done.\n', round(t/timeSteps*100));
