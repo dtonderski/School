@@ -67,3 +67,13 @@ for i=1:length(F)
     writeVideo(writerObj, frame);
 end
 close(writerObj);
+
+%%
+figure(2)
+clf
+timeStepsToPlot = t/2;
+PlotTrajectories3(xTrajectories(t-timeStepsToPlot:end,:),yTrajectories(t-timeStepsToPlot:end,:), nParticles, xStatic, yStatic, nStatic, radius, timeStepsToPlot, xRange, yRange, true, true)
+title(sprintf('$v_{mean} = %d, D_T = %d, D_R = %d, T_0 = %d$, %d active, %d passive',...
+    mean(vRange), diffusionTrans, diffusionRot, torqueConstant, nParticles, nStatic), 'interpreter', 'latex')
+
+save('Task3/3.mat') 
