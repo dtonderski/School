@@ -4,7 +4,7 @@ yRange = [-100, 100];
 vRange = [1 5];
 
 radius = 1;
-nParticles = 50;
+nParticles = 100;
 nStatic = 2000;
 diffusionTrans = 100;
 diffusionRot = 100;
