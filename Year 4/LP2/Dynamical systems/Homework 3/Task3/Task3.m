@@ -15,7 +15,7 @@ start = [1,1,1];
 [~,xData] = ode45(@(t,x) f(t,x), [0 t_to_discard], start);
 x0 = xData(end, :)';
 
-dt = 1e-6;%1e-7;
+dt = 1e-3;%1e-7;
 T = 1e3;
 %T = t_to_discard + dt;
 timeVector = t_to_discard:dt:T;
