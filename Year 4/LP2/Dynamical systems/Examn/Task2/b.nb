@@ -1,0 +1,134 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      3766,        124]
+NotebookOptionsPosition[      3197,        106]
+NotebookOutlinePosition[      3594,        122]
+CellTagsIndexPosition[      3551,        119]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"sdot", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"-", "mu"}], "*", "y"}], "+", 
+    RowBox[{"y", "*", 
+     RowBox[{"(", 
+      RowBox[{"s", "+", "mu", "-", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"s", "+", "mu"}], ")"}], "*", "y"}], "-", "y"}], ")"}]}]}]}],
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ydot", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"mu", "*", 
+      RowBox[{"(", 
+       RowBox[{"s", "+", "mu"}], ")"}]}], " ", "-", " ", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"s", "+", "mu"}], ")"}], "^", "2"}], " ", "+", " ", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"s", "+", "mu"}], ")"}], "*", "y"}], " ", "-", " ", 
+     RowBox[{"y", "^", "3"}]}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"J", " ", "=", " ", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"D", "[", 
+         RowBox[{"sdot", ",", "s"}], "]"}], ",", " ", 
+        RowBox[{"D", "[", 
+         RowBox[{"sdot", ",", "y"}], "]"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"D", "[", 
+         RowBox[{"ydot", ",", "s"}], "]"}], ",", " ", 
+        RowBox[{"D", "[", 
+         RowBox[{"ydot", ",", "y"}], "]"}]}], "}"}]}], "}"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"Eigenvalues", "[", 
+  RowBox[{"J", "/.", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"s", "\[Rule]", 
+      RowBox[{"-", "mu"}]}], ",", 
+     RowBox[{"y", "\[Rule]", "0"}]}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Eigenvalues", "[", 
+  RowBox[{"J", "/.", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"s", "\[Rule]", "0"}], ",", 
+     RowBox[{"y", "\[Rule]", "0"}]}], "}"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.819514885023987*^9, 3.819514936240116*^9}, {
+  3.8195149759401164`*^9, 3.8195151089951315`*^9}},
+ CellLabel->
+  "In[134]:=",ExpressionUUID->"729f35a4-c70d-4aaa-9dd9-8696c5f2546b"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[ImaginaryI]", " ", "mu"}], ",", 
+   RowBox[{
+    RowBox[{"-", "\[ImaginaryI]"}], " ", "mu"}]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.8195149365051165`*^9, {3.819514995940115*^9, 3.8195151092921314`*^9}},
+ CellLabel->
+  "Out[137]=",ExpressionUUID->"fc6ea17d-0900-48e4-9e6d-fa58e2cbb195"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"mu", ",", "0"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.8195149365051165`*^9, {3.819514995940115*^9, 3.8195151092951307`*^9}},
+ CellLabel->
+  "Out[138]=",ExpressionUUID->"eae8f684-f8d4-487d-ba25-feb8fffff75f"]
+}, Open  ]]
+},
+WindowSize->{1904, 997},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"12.1 for Microsoft Windows (64-bit) (June 19, 2020)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"02ac2e0f-7d0c-42b6-968a-ddd65728b1fb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 1998, 62, 143, "Input",ExpressionUUID->"729f35a4-c70d-4aaa-9dd9-8696c5f2546b"],
+Cell[2581, 86, 345, 9, 32, "Output",ExpressionUUID->"fc6ea17d-0900-48e4-9e6d-fa58e2cbb195"],
+Cell[2929, 97, 252, 6, 32, "Output",ExpressionUUID->"eae8f684-f8d4-487d-ba25-feb8fffff75f"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
